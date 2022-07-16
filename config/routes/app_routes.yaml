@@ -1,0 +1,18 @@
+app_frontend:
+  resource: "../../src/Controller/Frontend/"
+  type: annotation
+  prefix: /
+  options:
+    expose: true
+app_api:
+  resource: "../../src/Controller/Api/"
+  type: annotation
+  prefix: /api
+  options:
+    expose: true
+app_backend:
+  resource: "../../src/Controller/Backend/"
+  type: annotation
+  prefix: /backend
+  options:
+    expose: true

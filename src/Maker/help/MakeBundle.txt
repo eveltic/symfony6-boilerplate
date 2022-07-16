@@ -1,0 +1,5 @@
+The <info>%command.name%</info> command generates a new bundle folder structure.
+
+<info>php %command.full_name% BundleName --description --homepage --keywords --license --authors --php</info>
+
+If the argument is missing, the command will ask for the bundle name interactively.
