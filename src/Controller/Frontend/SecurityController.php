@@ -33,7 +33,10 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // If the user is logged throw it out
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_security_register'); }
         // TODO: Track action
+        // Show login form
         return $this->render('frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
     }
 
