@@ -24,6 +24,17 @@ use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 #[Route('/security', defaults: [], name: 'app_frontend_security_')]
 class SecurityController extends AbstractController
 {
+    /*
+     * TODO: login_link + user_checker + retrieve password symfonycasts + 
+     * TODO: Meter userSecurityNoticeManager
+     *  - Entity
+     *  - UserSecurityNoticeManager.php
+     * TODO: Meter custom authenticator:
+     *  - https://symfony.com/doc/current/security/custom_authenticator.html
+     *  - LoginformAuthenticator.php
+     *  - security.yaml
+     * 
+     */
     #[Route('/', name: 'index')]
     public function index(Request $request, MailerInterface $mailer): Response
     {
