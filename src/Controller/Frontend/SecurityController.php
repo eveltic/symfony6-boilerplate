@@ -40,6 +40,12 @@ class SecurityController extends AbstractController
         return $this->render('frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
     }
 
+    #[Route('/logout', name: 'logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
     #[Route('/verify', name: 'verify')]
     public function verify(EmailVerifier $emailVerifier, EmailManager $emailManager, Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
