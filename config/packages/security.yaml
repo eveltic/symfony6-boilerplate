@@ -25,7 +25,17 @@ security:
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
-
+            switch_user: true
+            logout:
+                path: app_frontend_security_logout
+                target: app_frontend_security_login
+#                invalidate_session: false
+            remember_me:
+                secret: '%env(APP_SECRET)%'
+                lifetime: 2592000 # 1 month in seconds
+                path: /
+                domain: ~
+                secure: true
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
