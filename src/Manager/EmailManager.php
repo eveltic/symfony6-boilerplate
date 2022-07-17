@@ -54,7 +54,7 @@ class EmailManager
 
         /* Send email to account owner */
         $oEmail = (new TemplatedEmail())
-            ->from(new Address($_SERVER['MAILER_FROM'], $_SERVER['APP_EMAIL_NAME']))
+            ->from(new Address($_SERVER['MAILER_FROM'], $_SERVER['MAILER_FROM_NAME']))
             ->to($sTo)
             ->subject(sprintf('[%s] %s', $_SERVER['APP_TITLE'], $this->translator->trans($sSubject)))
             ->htmlTemplate($sTemplate)

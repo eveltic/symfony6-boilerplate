@@ -1,21 +1,14 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'frontend/security/base.html.twig' %}
 {% block title %}Register{% endblock %}
-
 {% block body %}
     {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
-
     <h1>Register</h1>
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
+    {{ form_start(oForm) }}
+        {{ form_row(oForm.email) }}
+        {{ form_row(oForm.plainPassword, {label: 'Password'}) }}
+        {{ form_row(oForm.agreeTerms) }}
         <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+    {{ form_end(oForm) }}
 {% endblock %}
