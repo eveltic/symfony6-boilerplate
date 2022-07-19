@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -42,6 +44,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserNotice::class, orphanRemoval: true)]
+    private Collection $userNotices;
+
+    public function __construct()
+    {
+        $this->userNotices = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -154,6 +164,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserNotice>
+     */
+    public function getUserNotices(): Collection
+    {
+        return $this->userNotices;
+    }
+
+    public function addUserNotice(UserNotice $userNotice): self
+    {
+        if (!$this->userNotices->contains($userNotice)) {
+            $this->userNotices[] = $userNotice;
+            $userNotice->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserNotice(UserNotice $userNotice): self
+    {
+        if ($this->userNotices->removeElement($userNotice)) {
+            // set the owning side to null (unless already changed)
+            if ($userNotice->getUser() === $this) {
+                $userNotice->setUser(null);
+            }
+        }
 
         return $this;
     }

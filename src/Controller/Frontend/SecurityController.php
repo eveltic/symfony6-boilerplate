@@ -5,6 +5,7 @@ namespace App\Controller\Frontend;
 use App\Entity\User;
 use App\Form\Frontend\UserRegistrationFormType;
 use App\Manager\EmailManager;
+use App\Manager\UserNoticeManager;
 use App\Repository\UserRepository;
 use App\Security\Constants;
 use App\Security\EmailVerifier;
@@ -36,8 +37,14 @@ class SecurityController extends AbstractController
      * 
      */
     #[Route('/', name: 'index')]
-    public function index(Request $request, MailerInterface $mailer): Response
+    public function index(Request $request, UserNoticeManager $userNoticeManager): Response
     {
+
+        $userNoticeManager->setNotice(
+            UserNoticeManager::TYPE_DEBUG,
+            ['message' => 'Hello!', 'variables' => []],
+            ['message' => 'hello message!!!!!', 'variables' => []]);
+
         return new Response('<!DOCTYPE html><html><head></head><body>Security index controller</body></html>');
     }
 
