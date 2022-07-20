@@ -1,28 +1,9 @@
 <?php
 
+namespace App\Constants;
 
-namespace App\Security;
-
-
-/**
- * Class Constants
- * @package App\Security
- */
-class Constants
+trait ConstantsTrait
 {
-    /**
-     * User active
-     */
-    const USER_STATUS_ACTIVE = 1;
-    /**
-     * User inactive
-     */
-    const USER_STATUS_INACTIVE = 0;
-    /**
-     * User banned
-     */
-    const USER_STATUS_BANNED = -1;
-
     /**
      * @param $value
      * @return string|null

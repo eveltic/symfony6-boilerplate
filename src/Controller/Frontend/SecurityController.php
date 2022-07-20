@@ -2,17 +2,17 @@
 
 namespace App\Controller\Frontend;
 
+use App\Constants\UserConstans;
+use App\Constants\UserNoticeConstants;
 use App\Entity\User;
 use App\Form\Frontend\UserRegistrationFormType;
 use App\Manager\EmailManager;
 use App\Manager\UserNoticeManager;
 use App\Repository\UserRepository;
-use App\Security\Constants;
 use App\Security\EmailVerifier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -27,9 +27,6 @@ class SecurityController extends AbstractController
 {
     /*
      * TODO: login_link + user_checker + retrieve password symfonycasts + 
-     * TODO: Meter userSecurityNoticeManager
-     *  - Entity
-     *  - UserSecurityNoticeManager.php
      * TODO: Meter custom authenticator:
      *  - https://symfony.com/doc/current/security/custom_authenticator.html
      *  - LoginformAuthenticator.php
@@ -40,11 +37,12 @@ class SecurityController extends AbstractController
     public function index(Request $request, UserNoticeManager $userNoticeManager): Response
     {
 
-        $userNoticeManager->setNotice(
-            UserNoticeManager::TYPE_DEBUG,
-            ['message' => 'Hello!', 'variables' => []],
-            ['message' => 'hello message!!!!!', 'variables' => []]);
-
+        // Track action
+        // $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Account verified', 'You have been verified successfully into the system');
+        // $userNoticeManager->setNotice(
+        //     UserNoticeConstants::TYPE_DEBUG,
+        //     ['message' => 'Hello!', 'variables' => []],
+        //     ['message' => 'hello message!!!!!', 'variables' => []]);
         return new Response('<!DOCTYPE html><html><head></head><body>Security index controller</body></html>');
     }
 
@@ -65,7 +63,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/verify', name: 'verify')]
-    public function verify(EmailVerifier $emailVerifier, EmailManager $emailManager, Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
+    public function verify(UserNoticeManager $userNoticeManager, EmailVerifier $emailVerifier, EmailManager $emailManager, Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
         // Get user
         $oUser = $userRepository->find($request->get('id', null));
@@ -80,13 +78,14 @@ class SecurityController extends AbstractController
         // Add flash and send confirmation email
         $this->addFlash('success', sprintf('%s.', $translator->trans('Your email address has been verified')));
         $emailManager->create($oUser->getEmail(), 'Account verified', 'email/verify.html.twig', ['username' => $oUser->getEmail(),]);
-        // TODO: Track action
+        // Track action
+        $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Account verified', 'You have been verified successfully into the system', $oUser);
         // Redirect out
         return $this->redirectToRoute('app_frontend_index_index');
     }
 
     #[Route('/register', name: 'register')]
-    public function register(VerifyEmailHelperInterface $helper, EmailManager $emailManager, TranslatorInterface $translator, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher): Response
+    public function register(UserNoticeManager $userNoticeManager, VerifyEmailHelperInterface $helper, EmailManager $emailManager, TranslatorInterface $translator, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher): Response
     {
         // If the user is logged throw it out
         if ($this->getUser()) { return $this->redirectToRoute('app_frontend_index_index'); }
@@ -99,7 +98,7 @@ class SecurityController extends AbstractController
         if ($oForm->isSubmitted() && $oForm->isValid()) {
             // Generate user details and persist the object
             $oUser->setPassword($userPasswordHasher->hashPassword($oUser, $oForm->get('plainPassword')->getData()));
-            $oUser->setState(Constants::USER_STATUS_ACTIVE);
+            $oUser->setState(UserConstans::USER_STATUS_ACTIVE);
             $oUser->setUuid(Uuid::v4());
             $oUser->setCreatedAt(new \DateTimeImmutable('now'));
             $oUser->setRoles(['ROLE_USER']);
@@ -109,7 +108,8 @@ class SecurityController extends AbstractController
             $emailManager->create($oUser->getEmail(), 'Registration confirmation', 'email/register.html.twig', ['username' => $oUser->getEmail(), 'signedUrl' => $signatureComponents->getSignedUrl(), 'expiresAtMessageKey' => $signatureComponents->getExpirationMessageKey(), 'expiresAtMessageData' => $signatureComponents->getExpirationMessageData(),]);
             // Add success flash
             $this->addFlash('success', sprintf('%s.', $translator->trans('You have registered successfully, please check your email to activate your account')));
-            // TODO: Track action
+            // Track action
+            $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Registration completed', 'You have been registered successfully into the system', $oUser);
             // Redirect out
             return $this->redirectToRoute('app_frontend_index_index');
         }

@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Constants\UserNoticeConstants;
 use App\Entity\User;
 use App\Entity\UserNotice;
 use App\Manager\UserAgentManager;
@@ -16,11 +17,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserNoticeManager
 {
-    const TYPE_SECURITY = 1;
-    const TYPE_INFO = 2;
-    const TYPE_DEBUG = 3;
-    const TYPE_ERROR = 4;
-
     /**
      * @param Security $security
      * @param UserAgentManager $userAgentManager
@@ -38,12 +34,12 @@ class UserNoticeManager
     }
 
     /**
-     * @param User|UserInterface|null $oUser
+     * @param null|int|UserInterface $oUser
      * @return ?UserInterface
      */
-    private function getUser(null|User|UserInterface $oUser = null): ?UserInterface
+    private function getUser(null|int|UserInterface $oUser = null): ?UserInterface
     {
-        return (!$oUser instanceof User or !$oUser instanceof UserInterface) ? $this->security->getUser() : $oUser;
+        return ($oUser instanceof UserInterface) ? $oUser : (is_int($oUser) ? $this->entityManager->$this->getDoctrine()->getRepository(User::class)->find($oUser) : $this->security->getUser()) ;
     }
 
     /**
@@ -105,21 +101,21 @@ class UserNoticeManager
     }
 
     public function setNotice(
-        int $iType,
-        array|string $mMessage
+        int $iType
         , array|string $mSubject
+        , array|string $mMessage
+        , int|null|UserInterface $oUser = null
         , ?DateTimeImmutable $oDatetime = null
         , ?Request $oRequest = null
-        , ?UserInterface $oUser = null
         ): UserNotice
     {
-        if(!in_array($iType, [1,2,3,4])) throw new InvalidArgumentException('Notification type must be UserNoticeManager::TYPE_SECURITY, UserNoticeManager::TYPE_INFO, UserNoticeManager::TYPE_DEBUG or UserNoticeManager::TYPE_ERROR');
+        if(!in_array($iType, UserNoticeConstants::getConstants())) throw new InvalidArgumentException('Notification type must be UserNoticeManager::TYPE_SECURITY, UserNoticeManager::TYPE_INFO, UserNoticeManager::TYPE_DEBUG or UserNoticeManager::TYPE_ERROR');
         $oDatetime = $this->getDatetime($oDatetime);
         $oRequest = $this->getRequest($oRequest);
         $oUser = $this->getUser($oUser);
 
         $oUserNotice = new UserNotice();
-        $oUserNotice->setCreatedAt($this->getDatetime($oDatetime));
+        $oUserNotice->setCreatedAt($oDatetime);
         $oUserNotice->setFingerprint($this->getFingerPrint());
         $oUserNotice->setIp($oRequest->getClientIp());
         $oUserNotice->setMessage($this->translateNotice($mMessage));
@@ -127,7 +123,7 @@ class UserNoticeManager
         $oUserNotice->setReaded(false);
         $oUserNotice->setSubject($this->translateNotice($mSubject));
         $oUserNotice->setType($iType);
-        $oUserNotice->setUser($this->getUser());
+        $oUserNotice->setUser($oUser);
 
         $this->entityManager->persist($oUserNotice);
         $this->entityManager->flush();
