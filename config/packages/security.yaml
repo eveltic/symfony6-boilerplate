@@ -14,9 +14,13 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            custom_authenticators:
+                - App\Security\LoginFormAuthenticator
+            user_checker: App\Security\UserChecker
             lazy: true
             provider: app_user_provider
             form_login:
+                # enable_csrf: true
                 login_path: app_frontend_security_login
                 check_path: app_frontend_security_login
 

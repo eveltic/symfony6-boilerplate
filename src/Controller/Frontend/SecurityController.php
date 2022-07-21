@@ -26,12 +26,7 @@ use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 class SecurityController extends AbstractController
 {
     /*
-     * TODO: login_link + user_checker + retrieve password symfonycasts + 
-     * TODO: Meter custom authenticator:
-     *  - https://symfony.com/doc/current/security/custom_authenticator.html
-     *  - LoginformAuthenticator.php
-     *  - security.yaml
-     * 
+     * TODO: login_link + retrieve password symfonycasts
      */
     #[Route('/', name: 'index')]
     public function index(Request $request, UserNoticeManager $userNoticeManager): Response
@@ -51,7 +46,6 @@ class SecurityController extends AbstractController
     {
         // If the user is logged throw it out
         if ($this->getUser()) {return $this->redirectToRoute('app_frontend_security_register'); }
-        // TODO: Track action
         // Show login form
         return $this->render('frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
     }

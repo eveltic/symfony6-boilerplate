@@ -100,14 +100,7 @@ class UserNoticeManager
         return $message;
     }
 
-    public function setNotice(
-        int $iType
-        , array|string $mSubject
-        , array|string $mMessage
-        , int|null|UserInterface $oUser = null
-        , ?DateTimeImmutable $oDatetime = null
-        , ?Request $oRequest = null
-        ): UserNotice
+    public function setNotice(int $iType, array|string $mSubject, array|string $mMessage, int|null|UserInterface $oUser = null, ?DateTimeImmutable $oDatetime = null, ?Request $oRequest = null): UserNotice
     {
         if(!in_array($iType, UserNoticeConstants::getConstants())) throw new InvalidArgumentException('Notification type must be UserNoticeManager::TYPE_SECURITY, UserNoticeManager::TYPE_INFO, UserNoticeManager::TYPE_DEBUG or UserNoticeManager::TYPE_ERROR');
         $oDatetime = $this->getDatetime($oDatetime);
