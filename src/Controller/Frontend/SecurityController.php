@@ -6,10 +6,13 @@ use App\Constants\UserConstans;
 use App\Constants\UserNoticeConstants;
 use App\Entity\User;
 use App\Form\Frontend\UserRegistrationFormType;
+use App\Form\Frontend\UserRequestFormType;
+use App\Form\Frontend\UserResetFormType;
 use App\Manager\EmailManager;
 use App\Manager\UserNoticeManager;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,14 +22,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 #[Route('/security', defaults: [], name: 'app_frontend_security_')]
 class SecurityController extends AbstractController
 {
+    use ResetPasswordControllerTrait;
+    
     /*
-     * TODO: login_link + retrieve password symfonycasts
+     * TODO: login_link
      */
     #[Route('/', name: 'index')]
     public function index(Request $request, UserNoticeManager $userNoticeManager): Response
@@ -41,11 +49,106 @@ class SecurityController extends AbstractController
         return new Response('<!DOCTYPE html><html><head></head><body>Security index controller</body></html>');
     }
 
+    #[Route('/request', name: 'request')]
+    public function request(UserNoticeManager $userNoticeManager, Request $request, UserRepository $userRepository, ResetPasswordHelperInterface $resetPasswordHelper, EmailManager $emailManager): Response
+    {
+        // If the user is logged throw it out
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
+
+        $oForm = $this->createForm(UserRequestFormType::class);
+        $oForm->handleRequest($request);
+
+        if ($oForm->isSubmitted() && $oForm->isValid()) {
+            $oUser = $userRepository->findOneBy(['email' => $oForm->get('email')->getData()]);
+            if (!$oUser instanceof UserInterface) { return $this->redirectToRoute('app_frontend_security_check'); }
+            
+            // Get reset token
+            try {
+                $resetToken = $resetPasswordHelper->generateResetToken($oUser);
+            } catch (ResetPasswordExceptionInterface $e) {
+                return $this->redirectToRoute('app_frontend_security_check');
+            }
+
+            // Send email
+            $emailManager->create($oUser->getEmail(), 'Your password reset request', 'email/request.html.twig', ['username' => $oUser->getEmail(), 'resetToken' => $resetToken,]);
+            // Track action
+            $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User password reset requested', 'A password reset has been requested', $oUser);
+
+            // Store the token object in session for retrieval in check-email route.
+            $this->setTokenObjectInSession($resetToken);
+            
+            return $this->redirectToRoute('app_frontend_security_check');
+        }
+
+        return $this->render('frontend/security/request.html.twig', [
+            'oForm' => $oForm->createView(),
+        ]);
+    }
+
+    #[Route('/reset/{token}', name: 'reset')]
+    public function reset(EmailManager $emailManager, ResetPasswordHelperInterface $resetPasswordHelper, UserNoticeManager $userNoticeManager, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, string $token = null): Response
+    {
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
+
+        if ($token) {
+            // We store the token in session and remove it from the URL, to avoid the URL being loaded in a browser and potentially leaking the token to 3rd party JavaScript.
+            $this->storeTokenInSession($token);
+            return $this->redirectToRoute('app_frontend_security_reset');
+        }
+
+        $token = $this->getTokenFromSession();
+        if (null === $token) { throw $this->createNotFoundException('No reset password token found in the URL or in the session.'); }
+        
+        try {
+            $oUser = $resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface $e) {
+            $this->addFlash('error', sprintf('There was a problem validating your reset request - %s', $e->getReason()));
+            return $this->redirectToRoute('app_frontend_security_request');
+        }
+
+        // The token is valid; allow the user to change their password.
+        $oForm = $this->createForm(UserResetFormType::class);
+        $oForm->handleRequest($request);
+
+        if ($oForm->isSubmitted() && $oForm->isValid()) {
+            // A password reset token should be used only once, remove it.
+            $resetPasswordHelper->removeResetRequest($token);
+            
+            $oUser->setPassword($userPasswordHasher->hashPassword($oUser, $oForm->get('plainPassword')->getData()));
+            $entityManager->flush();
+
+            $this->cleanSessionAfterReset();
+
+            // Send email
+            $emailManager->create($oUser->getEmail(), 'Your password has been restored', 'email/reset.html.twig', ['username' => $oUser->getEmail(), 'password' => $oForm->get('plainPassword')->getData(),]);
+            // Track action
+            $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User password has been restored', 'A new password has been set', $oUser);
+
+            return $this->redirectToRoute('app_frontend_index_index');
+        }
+
+        return $this->render('frontend/security/reset.html.twig', ['oForm' => $oForm->createView(),]);
+    }
+
+    #[Route('/check', name: 'check')]
+    public function check(ResetPasswordHelperInterface $resetPasswordHelper): Response
+    {
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
+
+        // Generate a fake token if the user does not exist or someone hit this page directly.
+        // This prevents exposing whether or not a user was found with the given email address or not
+        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+            $resetToken = $resetPasswordHelper->generateFakeResetToken();
+        }
+
+        return $this->render('frontend/security/check.html.twig', ['resetToken' => $resetToken,]);
+    }
+
     #[Route('/login', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // If the user is logged throw it out
-        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_security_register'); }
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
         // Show login form
         return $this->render('frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
     }
@@ -59,6 +162,8 @@ class SecurityController extends AbstractController
     #[Route('/verify', name: 'verify')]
     public function verify(UserNoticeManager $userNoticeManager, EmailVerifier $emailVerifier, EmailManager $emailManager, Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
+        // If the user is logged throw it out
+        if ($this->getUser()) { return $this->redirectToRoute('app_frontend_index_index'); }
         // Get user
         $oUser = $userRepository->find($request->get('id', null));
         if (!$oUser instanceof UserInterface) {return $this->redirectToRoute('app_frontend_security_register'); }

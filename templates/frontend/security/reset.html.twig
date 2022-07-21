@@ -1,0 +1,10 @@
+{% extends 'frontend/security/base.html.twig' %}
+{% block title %}Reset your password{% endblock %}
+{% block body %}
+    <h1>Reset your password</h1>
+
+    {{ form_start(oForm) }}
+        {{ form_row(oForm.plainPassword) }}
+        <button class="btn btn-primary">Reset password</button>
+    {{ form_end(oForm) }}
+{% endblock %}
