@@ -39,6 +39,10 @@ class SecurityController extends AbstractController
     public function index(Request $request, UserNoticeManager $userNoticeManager): Response
     {
 
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_frontend_index_index'); 
+        }
+
         // Track action
         // $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Account verified', 'You have been verified successfully into the system');
         // $userNoticeManager->setNotice(
