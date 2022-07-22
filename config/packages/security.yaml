@@ -17,6 +17,13 @@ security:
             custom_authenticators:
                 - App\Security\LoginFormAuthenticator
             user_checker: App\Security\UserChecker
+            login_link:
+                check_route: app_frontend_security_login_link_check
+                signature_properties: ['id']
+                lifetime: 300
+                check_post_only: true
+                max_uses: 1
+                login_path: app_frontend_security_login
             lazy: true
             provider: app_user_provider
             form_login:

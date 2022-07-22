@@ -26,7 +26,7 @@ class LogoutSubscriber implements EventSubscriberInterface
 
     public function onLogoutEvent($event): void
     {
-        if($event->getToken()->getUser() instanceof UserInterface){
+        if(null !== $event->getToken() AND $event->getToken()->getUser() instanceof UserInterface){
 
             $this->userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User logout successfully', 'You have been logged out successfully', $event->getToken()->getUser());
         }

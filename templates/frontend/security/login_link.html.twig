@@ -1,0 +1,9 @@
+{% extends 'frontend/security/base.html.twig' %}
+{%block title %}Login Link{% endblock %}
+{% block body %}
+    {{ form_start(oForm) }}
+        {{ form_row(oForm.email) }}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button type="submit">Request</button>
+    {{ form_end(oForm) }}
+{% endblock %}

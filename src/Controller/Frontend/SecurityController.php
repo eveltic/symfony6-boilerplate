@@ -5,6 +5,7 @@ namespace App\Controller\Frontend;
 use App\Constants\UserConstans;
 use App\Constants\UserNoticeConstants;
 use App\Entity\User;
+use App\Form\Frontend\UserLoginLinkFormType;
 use App\Form\Frontend\UserRegistrationFormType;
 use App\Form\Frontend\UserRequestFormType;
 use App\Form\Frontend\UserResetFormType;
@@ -20,6 +21,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
@@ -32,10 +34,7 @@ use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 class SecurityController extends AbstractController
 {
     use ResetPasswordControllerTrait;
-    
-    /*
-     * TODO: login_link
-     */
+
     #[Route('/', name: 'index')]
     public function index(Request $request, UserNoticeManager $userNoticeManager): Response
     {
@@ -47,6 +46,33 @@ class SecurityController extends AbstractController
         //     ['message' => 'Hello!', 'variables' => []],
         //     ['message' => 'hello message!!!!!', 'variables' => []]);
         return new Response('<!DOCTYPE html><html><head></head><body>Security index controller</body></html>');
+    }
+
+    #[Route('/login/link', name: 'login_link')]
+    public function loginLink(UserNoticeManager $userNoticeManager, EmailManager $emailManager, LoginLinkHandlerInterface $loginLinkHandler, Request $request, UserRepository $userRepository): Response
+    {
+        // If the user is logged throw it out
+        if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
+
+        $oForm = $this->createForm(UserLoginLinkFormType::class, []);
+        $oForm->handleRequest($request);
+        if ($oForm->isSubmitted() && $oForm->isValid()) {
+            $oUser = $userRepository->findOneBy(['email' => $oForm->get('email')->getData()]);
+            $loginLinkDetails = $loginLinkHandler->createLoginLink($oUser);
+            // Send email
+            $emailManager->create($oUser->getEmail(), 'Login link requested', 'email/login_link.html.twig', ['username' => $oUser->getEmail(), 'link' => $loginLinkDetails->getUrl(),]);
+            // Track action
+            $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User Login link requested', 'A new login link has been requested', $oUser);
+            return $this->redirectToRoute('app_frontend_security_login', []);
+        }
+        return $this->render('frontend/security/login_link.html.twig', ['oForm' => $oForm->createView(),]);
+    }
+
+    #[Route('/login/check', name: 'login_link_check')]
+    public function loginCheck(Request $request): Response
+    {
+        // and render a template with the button
+        return $this->render('frontend/security/login_check.html.twig', ['expires' => $request->query->get('expires'),'user' => $request->query->get('user'),'hash' => $request->query->get('hash'),]);
     }
 
     #[Route('/request', name: 'request')]
@@ -80,9 +106,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_frontend_security_check');
         }
 
-        return $this->render('frontend/security/request.html.twig', [
-            'oForm' => $oForm->createView(),
-        ]);
+        return $this->render('frontend/security/request.html.twig', ['oForm' => $oForm->createView(),]);
     }
 
     #[Route('/reset/{token}', name: 'reset')]
