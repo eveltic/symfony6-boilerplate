@@ -1,4 +1,8 @@
-// any CSS you import will output into a single css file (app.css in this case)
+// Backend CSS
 import '../styles/backend.css';
-// start the Stimulus application
+// Start the Stimulus application
 import '../bootstrap';
+// AdminLTE
+import '../plugins/adminlte';
+// Flag Icons
+import '../plugins/flag-icons';

@@ -47,6 +47,9 @@
             "./config/routes/fos_js_routing.yaml"
         ]
     },
+    "knplabs/knp-menu-bundle": {
+        "version": "v3.2.0"
+    },
     "phpunit/phpunit": {
         "version": "9.5",
         "recipe": {

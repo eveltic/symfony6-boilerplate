@@ -1,16 +1,15 @@
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
-
-// any CSS you import will output into a single css file (app.css in this case)
+// Security CSS
 import '../styles/security.css';
-// start the Stimulus application
+// Start the Stimulus application
 import '../bootstrap';
-// Load adminlte files
+// AdminLTE
 import '../plugins/adminlte';
+// Flag Icons
+import '../plugins/flag-icons';
+// Toastr
+import '../plugins/toastr';
+// iCheck
+import 'admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css'
 
 $(function() { 
     // var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

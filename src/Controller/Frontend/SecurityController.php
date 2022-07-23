@@ -69,14 +69,14 @@ class SecurityController extends AbstractController
             $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User Login link requested', 'A new login link has been requested', $oUser);
             return $this->redirectToRoute('app_frontend_security_login', []);
         }
-        return $this->render('frontend/security/login_link.html.twig', ['oForm' => $oForm->createView(),]);
+        return $this->render('app/frontend/security/login_link.html.twig', ['oForm' => $oForm->createView(),]);
     }
 
     #[Route('/login/check', name: 'login_link_check')]
     public function loginCheck(Request $request): Response
     {
         // and render a template with the button
-        return $this->render('frontend/security/login_check.html.twig', ['expires' => $request->query->get('expires'),'user' => $request->query->get('user'),'hash' => $request->query->get('hash'),]);
+        return $this->render('app/frontend/security/login_check.html.twig', ['expires' => $request->query->get('expires'),'user' => $request->query->get('user'),'hash' => $request->query->get('hash'),]);
     }
 
     #[Route('/request', name: 'request')]
@@ -110,7 +110,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_frontend_security_check');
         }
 
-        return $this->render('frontend/security/request.html.twig', ['oForm' => $oForm->createView(),]);
+        return $this->render('app/frontend/security/request.html.twig', ['oForm' => $oForm->createView(),]);
     }
 
     #[Route('/reset/{token}', name: 'reset')]
@@ -155,7 +155,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_frontend_index_index');
         }
 
-        return $this->render('frontend/security/reset.html.twig', ['oForm' => $oForm->createView(),]);
+        return $this->render('app/frontend/security/reset.html.twig', ['oForm' => $oForm->createView(),]);
     }
 
     #[Route('/check', name: 'check')]
@@ -169,7 +169,7 @@ class SecurityController extends AbstractController
             $resetToken = $resetPasswordHelper->generateFakeResetToken();
         }
 
-        return $this->render('frontend/security/check.html.twig', ['resetToken' => $resetToken,]);
+        return $this->render('app/frontend/security/check.html.twig', ['resetToken' => $resetToken,]);
     }
 
     #[Route('/login', name: 'login')]
@@ -178,7 +178,7 @@ class SecurityController extends AbstractController
         // If the user is logged throw it out
         if ($this->getUser()) {return $this->redirectToRoute('app_frontend_index_index'); }
         // Show login form
-        return $this->render('frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
+        return $this->render('app/frontend/security/login.html.twig', ['last_username' => $authenticationUtils->getLastUsername(), 'error' => $authenticationUtils->getLastAuthenticationError()]);
     }
 
     #[Route('/logout', name: 'logout')]
@@ -241,6 +241,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_frontend_index_index');
         }
         // Render template with the form
-        return $this->render('frontend/security/register.html.twig', ['oForm' => $oForm->createView(), ]);
+        return $this->render('app/frontend/security/register.html.twig', ['oForm' => $oForm->createView(), ]);
     }
 }

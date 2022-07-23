@@ -1,0 +1,47 @@
+{#{% macro links() %}
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    {% set links = {
+        'app_frontend_security_login': 'Sign in'
+        , 'app_frontend_security_register': 'Register a new membership'
+        , 'app_frontend_security_login_link': 'Sign in with a link'
+        , 'app_frontend_security_request': 'I forgot my password'
+    } %}
+    <hr/>
+    {% for route, title in links %}
+        {% if route != currentRoute %}
+            <p class="mb-1"><a href="{{ path(route) }}">{{ title|trans }}</a></p>
+        {% endif %}
+    {% endfor %}
+    {{ knp_menu_render(knp_menu_get('invoke', [], {name: 'appLocales', locale: app.request.locale, locales: getParameter('app.locales')}), {'template': 'menu/frontend/securityLocales.html.twig'}) }}
+{% endmacro %}
+{% macro errors(error) %}
+    <script>window.onload = function(){ {% if error %}toastr.error('{{ error.messageKey|trans(error.messageData, 'security') }}');{% endif %} };</script>
+{% endmacro %}
+#}
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+   <head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% block title %}{% endblock %} - {{ 'Security'|trans }}</title>
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('security') }}
+		{% endblock %}
+		{% block javascripts %}
+			{{ encore_entry_script_tags('security') }}
+		{% endblock %}
+	</head>
+	<body class="hold-transition login-page">
+		<div class="login-box">
+			<div class="card card-outline card-primary">
+				<div class="card-header text-center">
+					<a href="{{ path('app_frontend_index_index') }}" class="h1">
+						<b>Admin</b>LTE</a>
+				</div>
+				<div class="card-body">
+            {% block body %}{% endblock %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

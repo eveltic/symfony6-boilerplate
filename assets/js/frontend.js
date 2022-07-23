@@ -1,4 +1,4 @@
-// any CSS you import will output into a single css file (app.css in this case)
+// Frontend CSS
 import '../styles/frontend.css';
-// start the Stimulus application
+// Start the Stimulus application
 import '../bootstrap';
