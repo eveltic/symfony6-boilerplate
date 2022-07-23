@@ -8,12 +8,11 @@
         {% block stylesheets %}
             {{ encore_entry_link_tags('security') }}
         {% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('security') }}
+        {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
-
-                {% block javascripts %}
-            {{ encore_entry_script_tags('security') }}
-        {% endblock %}
     </body>
 </html>
