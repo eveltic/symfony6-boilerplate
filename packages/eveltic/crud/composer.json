@@ -1,0 +1,19 @@
+{
+    "name": "eveltic/crud",
+    "description": "Another symfony crud",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Eveltic\\Crud\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "eveltic",
+            "email": "ipforner@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
