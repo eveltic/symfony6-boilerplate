@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a3ba04a62a41897ade5584af8b3ba5b",
+    "content-hash": "2f3d4472dd8d2082ded2557565fc4da6",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1443,6 +1443,64 @@
                 }
             ],
             "time": "2022-06-18T20:57:19+00:00"
+        },
+        {
+            "name": "eveltic/crud",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/eveltic/crud",
+                "reference": "da71475b47d95927a723001291fb2a4d0f11df15"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Eveltic\\Crud\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "eveltic",
+                    "email": "ipforner@gmail.com"
+                }
+            ],
+            "description": "Another symfony crud",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "eveltic/form-upload",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/eveltic/form-upload",
+                "reference": "3a5ff90e9a57463720bee2db78a1d8c683ef14bd"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Eveltic\\FormUpload\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "eveltic",
+                    "email": "ipforner@gmail.com"
+                }
+            ],
+            "description": "Another upload symfony form type",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -10446,7 +10504,10 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "eveltic/form-upload": 20,
+        "eveltic/crud": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
