@@ -1,0 +1,233 @@
+{%- extends 'knp_menu.html.twig' -%}
+{% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+{%- macro attributes(attributes) -%}
+    {%- for name, value in attributes -%}
+        {%- if value is not none and value is not same as(false) and name != 'icon' -%}
+            {{- ' %s="%s"'|format(name, value is same as(true) ? name|e : value|e)|raw -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{% macro dropdown(item, matcher) %}
+    {% import _self as self %}
+    {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+    <li class="nav-item has-treeview{% if matcher.isAncestor(item) %} menu-open{% endif %}">
+        {# Add item classes #}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set classes = classes|merge(['nav-link']) -%}
+        {% if matcher.isCurrent(item) %}{%- set classes = classes|merge(['active']) -%}{% endif %}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+
+        {# Extras #}
+        {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i>' : '<i class="nav-icon far fa-circle"></i>' -%}
+        {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+        {%- set href = (item.hasChildren == false and item.uri is not empty) ? item.uri : '#' -%}
+        {# Create the element #}
+        <a href="{{ href }}"{{ self.attributes(attributes) }}>
+            {{ icon|raw }}
+            <p>
+                {{ item.label }}
+                {% if item.hasChildren %}
+                    <i class="right fas fa-angle-left"></i>
+                {% endif %}
+                {{ badge|raw }}
+            </p>
+        </a>
+        {% if item.hasChildren %}
+            <ul class="nav nav-treeview" style="">
+                {% for child in item.children %}
+                    {% if child.extras.roles is not defined or child.extras.roles is empty or userHasRole(child.extras.roles) %}
+                    {{ self.dropdown(child, matcher) }}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+    {% endif %}
+{% endmacro %}
+
+{%- block compressed_root -%}
+    {% apply spaceless %}
+        {{ block('root') }}
+    {% endapply %}
+{%- endblock -%}
+
+{%- block root -%}
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="{{ path('app_frontend_index_index') }}" class="brand-link">
+            <img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">{{ getEnv('APP_TITLE_HTML')|raw }}</span>
+        </a>
+        {% set listAttributes = item.childrenAttributes %}
+        <div class="sidebar">
+            <!-- Sidebar user (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="{{ item.extras.user_avatar_src }}" class="img-circle" alt="{{ app.user.email }}">
+                </div>
+                <div class="info">
+                    {# TODO: CAMBIAR A LA RUTA ADECUADA #}
+                    <a href="{{ path('app_frontend_index_index') }}" class="d-block">{{ app.user.email }}</a>
+                </div>
+            </div>
+            <nav class="mt-2">
+                {{ block('list') -}}
+            </nav>
+        </div>
+    </aside>
+{%- endblock -%}
+
+{%- block list -%}
+    {%- if item.hasChildren and options.depth is not same as(0) and item.displayChildren -%}
+        {% import _self as self %}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set classes = classes|merge(['nav','nav-pills','nav-sidebar','flex-column']) -%}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+        {%- set attributes = attributes|merge({'data-widget': 'treeview', 'role': 'menu', 'data-accordion': 'false'}) -%}
+        {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+            <ul {{ self.attributes(attributes) }}>
+                {{ block('children') }}
+            </ul>
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block children -%}
+    {# save current variables #}
+    {%- set currentOptions = options -%}
+    {%- set currentItem = item -%}
+    {# update the depth for children #}
+    {%- if options.depth is not none -%}
+        {%- set options = options|merge({'depth': currentOptions.depth - 1}) -%}
+    {%- endif -%}
+    {# update the matchingDepth for children #}
+    {%- if options.matchingDepth is not none and options.matchingDepth > 0 -%}
+        {%- set options = options|merge({'matchingDepth': currentOptions.matchingDepth - 1}) -%}
+    {%- endif -%}
+    {%- for item in currentItem.children -%}
+        {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+            {{ block('item') }}
+        {% endif %}
+    {%- endfor -%}
+    {# restore current variables #}
+    {%- set item = currentItem -%}
+    {%- set options = currentOptions -%}
+{%- endblock -%}
+
+{%- block item -%}
+    {%- import _self as self -%}
+    {# Set default variables #}
+    {%- set isDropdown = item.hasChildren -%}
+    {%- set isHeader = item.uri is empty and isDropdown != true -%}
+    {%- set isLink = item.uri is not empty and isDropdown != true -%}
+    {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+        {# Create the element #}
+        {% if isDropdown %}
+            {{ block('item_dropdown') }}
+        {% elseif isHeader %}
+            {{ block('item_header') }}
+        {% elseif isLink %}
+            {{ block('item_link') }}
+        {% endif %}
+    {% endif %}
+{%- endblock -%}
+
+{%- block item_header -%}
+    {%- import _self as self -%}
+    {# Add item classes #}
+    {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+    {%- set attributes = item.linkAttributes -%}
+    {%- set classes = classes|merge(['nav-header']) -%}
+    {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+
+    {# Extras #}
+    {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i> ' : '' -%}
+    {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+
+    {# Create the element #}
+    {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+    <li{{ self.attributes(attributes) }}>
+        <div class="d-flex justify-content-between">
+            <div>{{ icon|raw }}{{ item.label|upper }}</div>
+            <div>{{ badge|raw }}</div>
+        </div>
+    </li>
+    {% endif %}
+{%- endblock -%}
+
+{%- block item_link -%}
+    {%- import _self as self -%}
+    {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+    <li class="nav-item">
+        {# Add item classes #}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set classes = classes|merge(['nav-link']) -%}
+{#        {% if matcher.isCurrent(item) or currentPath matches ('#' ~ item.uri ~ '(create|(\\d+\/(edit|clone|view)))#') %}{%- set classes = classes|merge(['active']) -%}{% endif %}#}
+        {% if matcher.isCurrent(item) or (currentPath in (item.uri)  and ('create' in currentPath or 'edit' in currentPath or 'clone' in currentPath or 'view' in currentPath)) %}{%- set classes = classes|merge(['active']) -%}{% endif %}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+        {# Extras #}
+        {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i>' : '<i class="nav-icon far fa-circle"></i>' -%}
+        {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+
+        {# Create the element #}
+        <a href="{{ item.uri }}"{{ self.attributes(attributes) }}>
+            {{ icon|raw }}
+            <p>
+                {{ item.label }}
+                {{ badge|raw }}
+            </p>
+        </a>
+    </li>
+    {% endif %}
+{%- endblock -%}
+
+{%- block item_dropdown -%}
+    {%- import _self as self -%}
+
+    {# Set default variables #}
+    {%- set isDropdown = item.hasChildren -%}
+    {%- set isHeader = item.uri is empty and isDropdown != true -%}
+    {%- set isLink = item.uri is not empty and isDropdown != true -%}
+    {% if item.extras.roles is not defined or item.extras.roles is empty or userHasRole(item.extras.roles) %}
+    <li class="nav-item has-treeview{% if matcher.isAncestor(item) %} menu-open{% endif %}">
+        {# Add item classes #}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set classes = classes|merge(['nav-link']) -%}
+        {% if matcher.isCurrent(item) %}{%- set classes = classes|merge(['active']) -%}{% endif %}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+
+        {# Extras #}
+        {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i>' : '<i class="nav-icon far fa-circle"></i>' -%}
+        {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+        {%- set href = (item.hasChildren == false and item.uri is not empty) ? item.uri : '#' -%}
+
+        {# Create the element #}
+        <a href="{{ href }}"{{ self.attributes(attributes) }}>
+            {{ icon|raw }}
+            <p>
+                {{ item.label }}
+                <i class="right fas fa-angle-left"></i>
+                {{ badge|raw }}
+            </p>
+        </a>
+        <ul class="nav nav-treeview" style="">
+            {% if isDropdown %}
+                {% for child in item.children %}
+                    {% if child.extras.roles is not defined or child.extras.roles is empty or userHasRole(child.extras.roles) %}
+                    {{ self.dropdown(child, matcher) }}
+                    {% endif %}
+                {% endfor %}
+            {% elseif isHeader %}
+                {{ block('item_header') }}
+            {% elseif isLink %}
+                {{ block('item_link') }}
+            {% endif %}
+        </ul>
+    </li>
+    {% endif %}
+{%- endblock -%}

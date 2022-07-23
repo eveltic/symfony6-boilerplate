@@ -30,3 +30,6 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Routing\AdvancedLoader:
         tags: [routing.loader]
+    App\Menu\MenuBuilder:
+        tags:
+            - { name: knp_menu.menu_builder, method: create, alias: invoke }

@@ -1,4 +1,4 @@
-{#{% macro links() %}
+{% macro links() %}
     {% set currentRoute = app.request.attributes.get('_route') %}
     {% set links = {
         'app_frontend_security_login': 'Sign in'
@@ -17,7 +17,6 @@
 {% macro errors(error) %}
     <script>window.onload = function(){ {% if error %}toastr.error('{{ error.messageKey|trans(error.messageData, 'security') }}');{% endif %} };</script>
 {% endmacro %}
-#}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
    <head>

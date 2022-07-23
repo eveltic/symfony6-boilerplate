@@ -1,0 +1,83 @@
+{%- extends 'knp_menu.html.twig' -%}
+
+{%- macro attributes(attributes) -%}
+    {%- for name, value in attributes -%}
+        {%- if value is not none and value is not same as(false) and name != 'icon' -%}
+            {{- ' %s="%s"'|format(name, value is same as(true) ? name|e : value|e)|raw -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- block compressed_root -%}
+    {% apply spaceless %}
+        {{ block('root') }}
+    {% endapply %}
+{%- endblock -%}
+
+{%- block root -%}
+    {% set listAttributes = item.childrenAttributes %}
+    {% set label = app.request.locale == 'en' ? 'us' : app.request.locale %}
+    <li class="nav-item dropdown" title="{{ label|trans({}, 'locales') }}">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="flag-icon flag-icon-{{ label }}"></i>
+        </a>
+        {{ block('list') -}}
+    </li>
+{%- endblock -%}
+
+{%- block list -%}
+    {%- if item.hasChildren and options.depth is not same as(0) and item.displayChildren -%}
+        {% import _self as self %}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set classes = classes|merge(['navbar-nav']) -%}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+        <div class="dropdown-menu dropdown-menu-right p-0">
+            {{ block('children') }}
+        </div>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block children -%}
+    {# save current variables #}
+    {%- set currentOptions = options -%}
+    {%- set currentItem = item -%}
+    {# update the depth for children #}
+    {%- if options.depth is not none -%}
+        {%- set options = options|merge({'depth': currentOptions.depth - 1}) -%}
+    {%- endif -%}
+    {# update the matchingDepth for children #}
+    {%- if options.matchingDepth is not none and options.matchingDepth > 0 -%}
+        {%- set options = options|merge({'matchingDepth': currentOptions.matchingDepth - 1}) -%}
+    {%- endif -%}
+    {%- for item in currentItem.children -%}
+        {{ block('item') }}
+    {%- endfor -%}
+    {# restore current variables #}
+    {%- set item = currentItem -%}
+    {%- set options = currentOptions -%}
+{%- endblock -%}
+
+{%- block item -%}
+    {%- import _self as self -%}
+        {{ block('item_link') }}
+{%- endblock -%}
+
+{%- block item_link -%}
+    {%- import _self as self -%}
+
+    {% set label = item.label == 'en' ? 'us' : item.label %}
+    {% set active = item.label == app.request.locale ? 'active' : '' %}
+    {# Add item classes #}
+    {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+    {%- set attributes = item.linkAttributes -%}
+    {%- set classes = classes|merge(['dropdown-item', active]) -%}
+    {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+    {# Extras #}
+    {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i>' : '' -%}
+    {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}    {# Create the element #}
+    {%- set href = path(app.request.attributes.get('_route'), app.request.query.all|merge(app.request.attributes.get('_route_params'))|merge({'_locale': item.label})) -%}
+    <a href="{{ href }}"{{ self.attributes(attributes) }}>
+        <i class="flag-icon flag-icon-{{ label }} mr-2"></i> {{ icon|raw }}{{ label|trans({}, 'locales') }}{{ badge|raw }}
+    </a>
+{%- endblock -%}

@@ -1,0 +1,114 @@
+{%- extends 'knp_menu.html.twig' -%}
+
+{%- macro attributes(attributes) -%}
+    {%- for name, value in attributes -%}
+        {%- if value is not none and value is not same as(false) and name != 'icon' -%}
+            {{- ' %s="%s"'|format(name, value is same as(true) ? name|e : value|e)|raw -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- block compressed_root -%}
+    {% apply spaceless %}
+        {{ block('root') }}
+    {% endapply %}
+{%- endblock -%}
+
+{%- block root -%}
+    {% set listAttributes = item.childrenAttributes %}
+    {{ block('list') -}}
+{%- endblock -%}
+
+{%- block list -%}
+    {%- if item.hasChildren and options.depth is not same as(0) and item.displayChildren -%}
+        {% import _self as self %}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set classes = classes|merge(['navbar-nav']) -%}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+        <ul {{ self.attributes(attributes) }}>
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+            {{ block('children') }}
+        </ul>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block children -%}
+    {# save current variables #}
+    {%- set currentOptions = options -%}
+    {%- set currentItem = item -%}
+    {# update the depth for children #}
+    {%- if options.depth is not none -%}
+        {%- set options = options|merge({'depth': currentOptions.depth - 1}) -%}
+    {%- endif -%}
+    {# update the matchingDepth for children #}
+    {%- if options.matchingDepth is not none and options.matchingDepth > 0 -%}
+        {%- set options = options|merge({'matchingDepth': currentOptions.matchingDepth - 1}) -%}
+    {%- endif -%}
+    {%- for item in currentItem.children -%}
+        {{ block('item') }}
+    {%- endfor -%}
+    {# restore current variables #}
+    {%- set item = currentItem -%}
+    {%- set options = currentOptions -%}
+{%- endblock -%}
+
+{%- block item -%}
+    {%- import _self as self -%}
+
+    {# Set default variables #}
+    {%- set isHeader = item.uri is empty -%}
+    {%- set isLink = item.uri is not empty -%}
+
+    {# Create the element #}
+    {% if isHeader %}
+        {{ block('item_header') }}
+    {% elseif isLink %}
+        {{ block('item_link') }}
+    {% endif %}
+{%- endblock -%}
+
+{%- block item_header -%}
+    {%- import _self as self -%}
+    {# Add item classes #}
+    {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+    {%- set attributes = item.linkAttributes -%}
+    {%- set classes = classes|merge(['nav-link']) -%}
+    {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+
+    {# Extras #}
+    {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i> ' : '' -%}
+    {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+
+    {# Create the element #}
+    <a href="#"{{ self.attributes(attributes) }}>
+        {{ icon|raw }}
+        {{ item.label }}
+        {{ badge|raw }}
+    </a>
+{%- endblock -%}
+
+{%- block item_link -%}
+    {%- import _self as self -%}
+    <li class="nav-item d-none d-sm-inline-block">
+        {# Add item classes #}
+        {%- set classes = item.linkAttribute('class') is not empty ? [item.linkAttribute('class')] : [] -%}
+        {%- set attributes = item.linkAttributes -%}
+        {%- set classes = classes|merge(['nav-link']) -%}
+        {% if matcher.isCurrent(item) %}{%- set classes = classes|merge(['active']) -%}{% endif %}
+        {%- set attributes = attributes|merge({'class': classes|join(' ')}) -%}
+
+        {# Extras #}
+        {%- set icon = item.labelAttributes['icon'] is defined and item.labelAttributes['icon'] is not empty ? '<i class="nav-icon ' ~ item.labelAttributes['icon'] ~ '"></i>' : '' -%}
+        {%- set badge = (item.labelAttributes['badge']['class'] is defined and item.labelAttributes['badge']['class'] is not empty and item.labelAttributes['badge']['value'] is defined and item.labelAttributes['badge']['value'] is not empty)? '<span class="badge ' ~ item.labelAttributes['badge']['class'] ~ '">' ~ item.labelAttributes['badge']['value'] ~ '</span>': '' -%}
+
+        {# Create the element #}
+        <a href="{{ item.uri }}"{{ self.attributes(attributes) }}>
+            {{ icon|raw }}
+            {{ item.label }}
+            {{ badge|raw }}
+        </a>
+    </li>
+{%- endblock -%}
