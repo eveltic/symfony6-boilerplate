@@ -1,0 +1,19 @@
+{
+    "name": "eveltic/form-upload",
+    "description": "Another upload symfony form type",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Eveltic\\FormUpload\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "eveltic",
+            "email": "ipforner@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
