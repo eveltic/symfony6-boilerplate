@@ -5,10 +5,10 @@ namespace App\Constants;
 
 
 /**
- * Class Constants
- * @package App\Security
+ * Class UserConstans
+ * @package App\Constants
  */
-class UserConstans
+class UserConstants
 {
     use ConstantsTrait;
     

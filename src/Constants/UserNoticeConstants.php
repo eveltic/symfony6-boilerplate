@@ -5,8 +5,8 @@ namespace App\Constants;
 
 
 /**
- * Class UserNotice
- * @package App\Security
+ * Class UserNoticeConstants
+ * @package App\Constants
  */
 class UserNoticeConstants
 {
