@@ -1,10 +1,52 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{% block title %}Reset your password{% endblock %}
+{% block title %}{{ 'Reset your password'|trans }}{% endblock %}
 {% block body %}
-    <h1>Reset your password</h1>
-
-    {{ form_start(oForm) }}
-        {{ form_row(oForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(oForm) }}
+    {% set passwordFirstError = form_errors(oForm.plainPassword.first)|length > 0 %}
+    {% set passwordSecondError = form_errors(oForm.plainPassword.second)|length > 0 %}
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Reset your password'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    {{ form_start(oForm) }}
+                    <div class="input-group mb-3">
+                        {% if passwordFirstError %}
+                            {{ form_widget(oForm.plainPassword.first, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.plainPassword.first)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Password'|trans, 'aria-label': 'Password'|trans }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Password'|trans, 'aria-label': 'Password'|trans }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="input-group mb-3">
+                        {% if passwordFirstError %}
+                            {{ form_widget(oForm.plainPassword.second, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.plainPassword.second)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Confirm password'|trans, 'aria-label': 'Confirm password'|trans }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm password'|trans, 'aria-label': 'Confirm password'|trans }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <!-- /.col -->
+                        <div class="col-8"></div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">{{ 'Reset'|trans }}</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    {{ form_end(oForm) }}
+                {% endif %}
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

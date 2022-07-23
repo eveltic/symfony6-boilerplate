@@ -1,12 +1,38 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{%block title %}Login Check{% endblock %}
+{%block title %}{{ 'Login Check'|trans }}{% endblock %}
 {% block body %}
-    <h2>Hi! You are about to login to ...</h2>
-    <!-- for instance, use a form with hidden fields to create the POST request -->
-    <form action="{{ path('app_frontend_security_login_link_check') }}" method="POST">
-        <input type="hidden" name="expires" value="{{ expires }}">
-        <input type="hidden" name="user" value="{{ user }}">
-        <input type="hidden" name="hash" value="{{ hash }}">
-        <button type="submit">Continue</button>
-    </form>
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Hi! You are about to login to the website within clicking the button below'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    <form action="{{ path('app_frontend_security_login_link_check') }}" method="POST">
+                        <input type="hidden" name="expires" value="{{ expires }}">
+                        <input type="hidden" name="user" value="{{ user }}">
+                        <input type="hidden" name="hash" value="{{ hash }}">
+                        <div class="row">
+                            <div class="col-8"></div>
+                            <!-- /.col -->
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-primary btn-block">{{ 'Continue'|trans }}</button>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                    </form>
+                {% endif %}
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

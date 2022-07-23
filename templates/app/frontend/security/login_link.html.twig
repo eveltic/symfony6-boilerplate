@@ -1,9 +1,44 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{%block title %}Login Link{% endblock %}
+{%block title %}{{ 'Login with link'|trans }}{% endblock %}
 {% block body %}
-    {{ form_start(oForm) }}
-        {{ form_row(oForm.email) }}
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        <button type="submit">Request</button>
-    {{ form_end(oForm) }}
+    {% set emailError = form_errors(oForm.email)|length > 0 %}
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Enter your username and we we will send you a link to log in'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    {{ form_start(oForm) }}
+                    <div class="input-group mb-3">
+                        {% if emailError %}
+                            {{ form_widget(oForm.email, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.email)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Email'|trans, 'aria-label': 'Email'|trans, 'autofocus':'' }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'|trans, 'aria-label': 'Email'|trans, 'autofocus':'' }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-8"></div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">{{ 'Request'|trans }}</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    {{ form_end(oForm) }}
+                {% endif %}
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

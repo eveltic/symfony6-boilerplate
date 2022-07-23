@@ -1,19 +1,39 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{% block title %}Reset your password{% endblock %}
+{% block title %}{{ 'Request your password'|trans }}{% endblock %}
 {% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Reset your password</h1>
-    {{ form_start(oForm) }}
-        {{ form_row(oForm.email) }}
-        <div>
-            <small>
-                Enter your email address and we will send you a
-                link to reset your password.
-            </small>
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Enter your email address and we we will send you a link to reset your password'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    {{ form_start(oForm) }}
+                    <div class="input-group mb-3">
+                        {{ form_widget(oForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'|trans, 'aria-label': 'Email'|trans }}) }}
+                    </div>
+                    <div class="row">
+                        <div class="col-8"></div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">{{ 'Request'|trans }}</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    {{ form_end(oForm) }}
+                {% endif %}
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
         </div>
-
-        <button class="btn btn-primary">Send password reset email</button>
-    {{ form_end(oForm) }}
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

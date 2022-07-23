@@ -1,14 +1,78 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{% block title %}Register{% endblock %}
+{% block title %}{{ 'Register'|trans }}{% endblock %}
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Register</h1>
-    {{ form_start(oForm) }}
-        {{ form_row(oForm.email) }}
-        {{ form_row(oForm.plainPassword, {label: 'Password'}) }}
-        {{ form_row(oForm.agreeTerms) }}
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(oForm) }}
+{#    {% set usernameError = form_errors(oForm.username)|length > 0 %}#}
+    {% set emailError = form_errors(oForm.email)|length > 0 %}
+    {% set passwordFirstError = form_errors(oForm.plainPassword.first)|length > 0 %}
+    {% set passwordSecondError = form_errors(oForm.plainPassword.second)|length > 0 %}
+    {% set agreeTermsError = form_errors(oForm.agreeTerms)|length > 0 %}
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Register a new membership'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    {{ form_start(oForm) }}
+{#                    <div class="input-group mb-3">#}
+{#                        {% if usernameError %}#}
+{#                            {{ form_widget(oForm.username, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.username)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Username'|trans, 'aria-label': 'Username'|trans, 'autofocus':'' }}) }}#}
+{#                        {% else %}#}
+{#                            {{ form_widget(oForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Username'|trans, 'aria-label': 'Username'|trans, 'autofocus':'' }}) }}#}
+{#                        {% endif %}#}
+{#                        <div class="input-group-append">#}
+{#                            <div class="input-group-text">#}
+{#                                <span class="fas fa-user"></span>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+                    <div class="input-group mb-3">
+                        {% if emailError %}
+                            {{ form_widget(oForm.email, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.email)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Email'|trans, 'aria-label': 'Email'|trans }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'|trans, 'aria-label': 'Email'|trans }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="input-group mb-3">
+                        {% if passwordFirstError %}
+                            {{ form_widget(oForm.plainPassword.first, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.plainPassword.first)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Password'|trans, 'aria-label': 'Password'|trans }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Password'|trans, 'aria-label': 'Password'|trans }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="input-group mb-3">
+                        {% if passwordFirstError %}
+                            {{ form_widget(oForm.plainPassword.second, {'attr': {'data-toggle': 'tooltip', 'data-placement': 'right', 'title': form_errors(oForm.plainPassword.second)|raw|striptags, 'class': 'form-control is-invalid', 'placeholder': 'Confirm password'|trans, 'aria-label': 'Confirm password'|trans }}) }}
+                        {% else %}
+                            {{ form_widget(oForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm password'|trans, 'aria-label': 'Confirm password'|trans }}) }}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div {% if agreeTermsError %}style="color: #dc3545;" data-toggle="tooltip" data-placement="right" title="{{ form_errors(oForm.agreeTerms)|raw|striptags }}"{% endif %}>
+                                    {{ form_widget(oForm.agreeTerms) }}
+                                    {{ form_label(oForm.agreeTerms) }}
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">{{ 'Register'|trans }}</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    {{ form_end(oForm) }}
+                {% endif %}
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

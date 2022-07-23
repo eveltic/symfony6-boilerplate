@@ -15,7 +15,7 @@
     {{ knp_menu_render(knp_menu_get('invoke', [], {name: 'appLocales', locale: app.request.locale, locales: getParameter('app.locales')}), {'template': 'menu/frontend/securityLocales.html.twig'}) }}
 {% endmacro %}
 {% macro errors(error) %}
-    <script>window.onload = function(){ {% if error %}toastr.error('{{ error.messageKey|trans(error.messageData, 'security') }}');{% endif %} };</script>
+    <script>{% if error %}toastr.error('{{ error.messageKey|trans(error.messageData, 'security') }}');{% endif %}</script>
 {% endmacro %}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
@@ -23,24 +23,17 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>{% block title %}{% endblock %} - {{ 'Security'|trans }}</title>
+		{{ include('widget/favicon.html.twig') }}
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('security') }}
+			<style>body {background: url({{ asset(getEnv('APP_SECURITY_BACKGROUND')) }}) no-repeat center center fixed !important;-webkit-background-size: cover !important;-moz-background-size: cover!important;-o-background-size: cover!important;background-size: cover!important;}</style>
 		{% endblock %}
 		{% block javascripts %}
 			{{ encore_entry_script_tags('security') }}
 		{% endblock %}
 	</head>
 	<body class="hold-transition login-page">
-		<div class="login-box">
-			<div class="card card-outline card-primary">
-				<div class="card-header text-center">
-					<a href="{{ path('app_frontend_index_index') }}" class="h1">
-						<b>Admin</b>LTE</a>
-				</div>
-				<div class="card-body">
-            {% block body %}{% endblock %}
-				</div>
-			</div>
-		</div>
+	{% block body %}{% endblock %}
+	{% include('widget/flashbag.html.twig') %}
 	</body>
 </html>

@@ -1,19 +1,60 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-{%block title %}Login{% endblock %}
+{%block title %}{{ 'Login'|trans }}{% endblock %}
 {% block body %}
-    <form action="{{ path('app_frontend_security_login') }}" method="post">
-        <label for="username">Email:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}"/>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password"/>
-        <label><input type="checkbox" name="_remember_me" checked/>Keep me logged in</label>
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        {# If you want to control the URL the user is redirected to on success
-        <input type="hidden" name="_target_path" value="/account"/> #}
-
-        <button type="submit">login</button>
-    </form>
-    {{ _self.links() }}
-    {{ _self.errors(error) }}
+<div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Sign in to start your session'|trans }}</p>
+                {% if app.user %}
+                <div class="mb-3">
+                    {{ 'You are logged in as'|trans }} {{ app.user.email }}<br><a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                </div>
+                {% else %}
+                    <form method="post">
+                        <div class="input-group mb-3">
+                            <input type="email" name="_username" value="{{ last_username }}" class="form-control" placeholder="{{ 'Email'|trans }}">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" name="_password"  class="form-control" placeholder="{{ 'Password'|trans }}">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="remember" name="_remember_me">
+                                    <label class="checkbox-custom custom-control-label required" for="remember">
+                                        {{ 'Remember Me'|trans }}
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-primary btn-block">{{ 'Sign In'|trans }}</button>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    </form>
+                {% endif %}
+                {{ _self.links() }}
+                {{ _self.errors(error) }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

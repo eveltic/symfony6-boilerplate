@@ -1,0 +1,2 @@
+<!-- Toastr -->
+<script>window.onload = function() { {% for type, messages in app.flashes %}{% for message in messages %}toastr.{{ type }}('{{ message|raw }}');{% endfor %}{% endfor %}};</script>

@@ -1,11 +1,27 @@
 {% extends 'app/frontend/security/_template.html.twig' %}
-
-{% block title %}Password Reset Email Sent{% endblock %}
-
+{% block title %}{{ 'Password Reset Email Sent'|trans }}{% endblock %}
 {% block body %}
-    <p>
-        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
-        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
-    </p>
-    <p>If you don't receive an email please check your spam folder or <a href="{{ path('app_frontend_security_request') }}">try again</a>.</p>
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Password Reset Email Sent'|trans }}</p>
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-12">
+                        <p>{{ 'An email has been sent that contains a link that you can click to reset your password. This link will expire in'|trans }} {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+                        <p>{{ 'If you don\'t receive an email please check your spam folder or'|trans }} <a href="{{ path('app_frontend_security_request') }}">{{ 'try again'|trans }}</a>.</p>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                {{ _self.links() }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
 {% endblock %}

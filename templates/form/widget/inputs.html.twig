@@ -1,0 +1,18 @@
+{% block password_widget %}
+    {%- set type = type|default('password') -%}
+    <div class="input-group">
+        {{- block('form_widget_simple') -}}
+        <div class="input-group-append">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+        </div>
+    </div>
+{% endblock password_widget %}
+{% block email_widget %}
+    {%- set type = type|default('email') -%}
+    <div class="input-group">
+        {{- block('form_widget_simple') -}}
+        <div class="input-group-append">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+        </div>
+    </div>
+{% endblock email_widget %}
