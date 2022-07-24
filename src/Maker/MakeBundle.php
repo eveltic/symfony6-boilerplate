@@ -57,7 +57,7 @@ final class MakeBundle extends AbstractMaker
     {
         try {
             // Get bundle data
-            $bundleName = ucfirst(rtrim($input->getArgument('name'), 'Bundle')); /* Remove Bundle keyword if present at string ending */
+            $bundleName = ucfirst( str_ends_with($input->getArgument('name'), 'Bundle') ? substr($input->getArgument('name'), 0, -6) :  $input->getArgument('name')); /* Remove Bundle keyword if present at string ending */
             $bundleDescription = ucfirst($input->getOption('description'));
             $bundleHomepage = $input->getOption('homepage');
             $bundleKeywords = ucfirst(str_replace(',', '","', $input->getOption('keywords')));
