@@ -1,9 +1,8 @@
 <?php
-
-
 namespace App\Security;
 
-use App\Constants\UserConstans;
+
+use App\Constants\UserConstants;
 use App\Constants\UserNoticeConstants;
 use App\Entity\User;
 use App\Manager\UserNoticeManager;
@@ -27,10 +26,10 @@ class UserChecker implements UserCheckerInterface
         }
 
         /* Check user status */
-        if($oUser->getState() != UserConstans::USER_STATUS_ACTIVE)
+        if($oUser->getState() != UserConstants::USER_STATUS_ACTIVE)
         {
-            $this->userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Inactive user login attempt', sprintf('%s login attempt', UserConstans::getConstant($oUser->getState())), $oUser);
-            throw new CustomUserMessageAuthenticationException(sprintf('Your user state is %s', UserConstans::getConstant($oUser->getState())));
+            $this->userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Inactive user login attempt', sprintf('%s login attempt', UserConstants::getConstant($oUser->getState())), $oUser);
+            throw new CustomUserMessageAuthenticationException(sprintf('Your user state is %s', UserConstants::getConstant($oUser->getState())));
         }
     }
 
