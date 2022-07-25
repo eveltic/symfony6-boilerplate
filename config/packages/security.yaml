@@ -34,6 +34,7 @@ security:
                 enable_csrf: true
                 login_path: app_frontend_security_login
                 check_path: app_frontend_security_login
+                failure_path: app_frontend_security_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -63,6 +64,7 @@ security:
         - { path: ^/security/register, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/verify, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/login, roles: PUBLIC_ACCESS , requires_channel: https }
+        - { path: ^/security/2fa, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/logout, roles: PUBLIC_ACCESS , requires_channel: https }
 
 when@test:
