@@ -11,6 +11,8 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "eveltic/crud": "dev-main",
+        "eveltic/form-upload": "dev-main",
         "friendsofsymfony/jsrouting-bundle": "^3.2",
         "knplabs/knp-menu-bundle": "^3.2",
         "phpdocumentor/reflection-docblock": "^5.3",
@@ -50,9 +52,7 @@
         "symfonycasts/reset-password-bundle": "^1.14",
         "symfonycasts/verify-email-bundle": "^1.11",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "eveltic/form-upload": "dev-main",
-        "eveltic/crud": "dev-main"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f3d4472dd8d2082ded2557565fc4da6",
+    "content-hash": "be5aaef390a4d012e36cf32d8292cef0",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -10503,8 +10503,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "eveltic/form-upload": 20,
-        "eveltic/crud": 20
+        "eveltic/crud": 20,
+        "eveltic/form-upload": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
