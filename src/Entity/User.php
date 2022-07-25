@@ -11,11 +11,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
+use Scheb\TwoFactorBundle\Model\TrustedDeviceInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupCodeInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupCodeInterface, TrustedDeviceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupC
 
     #[ORM\Column]
     private array $backupCodes = [];
+
+    #[ORM\Column]
+    private ?int $trustedVersion = null;
 
     public function __construct()
     {
@@ -232,5 +236,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupC
         if ($key !== false){
             unset($this->backupCodes[$key]);
         }
+    }
+
+    public function getTrustedTokenVersion(): int
+    {
+        return $this->trustedVersion;
+    }
+    
+    public function getTrustedVersion(): ?int
+    {
+        return $this->trustedVersion;
+    }
+
+    public function setTrustedVersion(int $trustedVersion): self
+    {
+        $this->trustedVersion = $trustedVersion;
+
+        return $this;
     }
 }
