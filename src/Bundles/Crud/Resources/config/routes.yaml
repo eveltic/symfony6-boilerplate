@@ -1,0 +1,24 @@
+app_frontend_crud:
+  resource: '../../Controller/Frontend'
+  type: annotation
+  prefix: crud
+  options:
+    expose: true
+app_api_crud:
+  resource: '../../Controller/Api/'
+  type: annotation
+  prefix: api/crud
+  options:
+    expose: true
+app_ajax_crud:
+  resource: '../../Controller/Ajax/'
+  type: annotation
+  prefix: ajax/crud
+  options:
+    expose: true
+app_backend_crud:
+  resource: '../../Controller/Backend/'
+  type: annotation
+  prefix: backend/crud
+  options:
+    expose: true
