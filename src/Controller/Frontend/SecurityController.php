@@ -2,7 +2,7 @@
 
 namespace App\Controller\Frontend;
 
-use App\Constants\UserConstans;
+use App\Constants\UserConstants;
 use App\Constants\UserNoticeConstants;
 use App\Entity\User;
 use App\Form\Frontend\UserLoginLinkFormType;
@@ -229,7 +229,7 @@ class SecurityController extends AbstractController
         if ($oForm->isSubmitted() && $oForm->isValid()) {
             // Generate user details and persist the object
             $oUser->setPassword($userPasswordHasher->hashPassword($oUser, $oForm->get('plainPassword')->getData()));
-            $oUser->setState(UserConstans::USER_STATUS_ACTIVE);
+            $oUser->setState(UserConstants::USER_STATUS_ACTIVE);
             $oUser->setUuid(Uuid::v4());
             $oUser->setCreatedAt(new \DateTimeImmutable('now'));
             $oUser->setRoles(['ROLE_USER']);
