@@ -75,7 +75,11 @@ class SecurityController extends AbstractController
     #[Route('/login/check', name: 'login_link_check')]
     public function loginCheck(Request $request): Response
     {
-        // and render a template with the button
+        // If the user is logged throw it out
+        if ($this->getUser()) { return $this->redirectToRoute('app_frontend_index_index'); }
+        // If the required data isn't present redirect out
+        if(empty($request->query->get('hash')) or empty($request->query->get('expires')) or empty($request->query->get('user'))){ return $this->redirectToRoute('app_frontend_security_login_link'); }
+        // Render a template with the button
         return $this->render('app/frontend/security/login_check.html.twig', ['expires' => $request->query->get('expires'),'user' => $request->query->get('user'),'hash' => $request->query->get('hash'),]);
     }
 
@@ -193,7 +197,7 @@ class SecurityController extends AbstractController
         // If the user is logged throw it out
         if ($this->getUser()) { return $this->redirectToRoute('app_frontend_index_index'); }
         // Get user
-        $oUser = $userRepository->find($request->get('id', null));
+        $oUser = $userRepository->findOneBy(['id' => $request->get('id', null)]);
         if (!$oUser instanceof UserInterface) {return $this->redirectToRoute('app_frontend_security_register'); }
         // Validate email confirmation link, sets User::isVerified=true and persists
         try {
