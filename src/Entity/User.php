@@ -10,11 +10,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupCodeInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -47,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserNotice::class, orphanRemoval: true)]
     private Collection $userNotices;
+
+    #[ORM\Column]
+    private array $backupCodes = [];
 
     public function __construct()
     {
@@ -196,5 +200,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getBackupCodes(): array
+    {
+        return $this->backupCodes;
+    }
+
+    public function setBackupCodes(array $backupCodes): self
+    {
+        $this->backupCodes = $backupCodes;
+
+        return $this;
+    }
+
+    public function addBackUpCode(string $backUpCode): void
+    {
+        if (!in_array($backUpCode, $this->backupCodes)) {
+            $this->backupCodes[] = $backUpCode;
+        }
+    }
+
+    public function isBackupCode(string $code): bool
+    {
+        return in_array($code, $this->backupCodes);
+    }
+
+    public function invalidateBackupCode(string $code): void
+    {
+        $key = array_search($code, $this->backupCodes);
+        if ($key !== false){
+            unset($this->backupCodes[$key]);
+        }
     }
 }
