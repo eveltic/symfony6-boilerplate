@@ -48,12 +48,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserNotice::class, orphanRemoval: true)]
     private Collection $userNotices;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $trustedDevices = [];
-
-    #[ORM\Column(length: 191, nullable: true)]
-    private ?string $backupCode = null;
-
     public function __construct()
     {
         $this->userNotices = new ArrayCollection();
@@ -200,30 +194,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $userNotice->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTrustedDevices(): ?array
-    {
-        return $this->trustedDevices;
-    }
-
-    public function setTrustedDevices(?array $trustedDevices): self
-    {
-        $this->trustedDevices = $trustedDevices;
-
-        return $this;
-    }
-
-    public function getBackupCode(): ?string
-    {
-        return $this->backupCode;
-    }
-
-    public function setBackupCode(?string $backupCode): self
-    {
-        $this->backupCode = $backupCode;
 
         return $this;
     }
