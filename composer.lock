@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be5aaef390a4d012e36cf32d8292cef0",
+    "content-hash": "8cbd3b94d4279a23677db610bb6d8efb",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2415,6 +2415,73 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
             "time": "2021-07-14T16:46:02+00:00"
+        },
+        {
+            "name": "scheb/2fa-bundle",
+            "version": "v6.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scheb/2fa-bundle.git",
+                "reference": "459b77d1d1c376be418e3943546a34150f5cf9e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/459b77d1d1c376be418e3943546a34150f5cf9e4",
+                "reference": "459b77d1d1c376be418e3943546a34150f5cf9e4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "~8.0.0 || ~8.1.0",
+                "symfony/config": "^5.4 || ^6.0",
+                "symfony/dependency-injection": "^5.4 || ^6.0",
+                "symfony/event-dispatcher": "^5.4 || ^6.0",
+                "symfony/framework-bundle": "^5.4 || ^6.0",
+                "symfony/http-foundation": "^5.4 || ^6.0",
+                "symfony/http-kernel": "^5.4 || ^6.0",
+                "symfony/property-access": "^5.4 || ^6.0",
+                "symfony/security-bundle": "^5.4 || ^6.0",
+                "symfony/twig-bundle": "^5.4 || ^6.0"
+            },
+            "conflict": {
+                "scheb/two-factor-bundle": "*"
+            },
+            "suggest": {
+                "scheb/2fa-backup-code": "Emergency codes when you have no access to other methods",
+                "scheb/2fa-email": "Send codes by email",
+                "scheb/2fa-google-authenticator": "Google Authenticator support",
+                "scheb/2fa-totp": "Temporary one-time password (TOTP) support (Google Authenticator compatible)",
+                "scheb/2fa-trusted-device": "Trusted devices support"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Scheb\\TwoFactorBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Scheb",
+                    "email": "me@christianscheb.de"
+                }
+            ],
+            "description": "A generic interface to implement two-factor authentication in Symfony applications",
+            "homepage": "https://github.com/scheb/2fa",
+            "keywords": [
+                "2fa",
+                "Authentication",
+                "symfony",
+                "two-factor",
+                "two-step"
+            ],
+            "support": {
+                "source": "https://github.com/scheb/2fa-bundle/tree/v6.0.3"
+            },
+            "time": "2022-07-21T17:55:31+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
