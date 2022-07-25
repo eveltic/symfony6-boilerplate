@@ -20,8 +20,6 @@ security:
         main:
             custom_authenticators:
                 - App\Security\LoginFormAuthenticator
-            two_factor:
-                trusted_parameter_name: _trusted    
             user_checker: App\Security\UserChecker
             login_link:
                 check_route: app_frontend_security_login_link_check

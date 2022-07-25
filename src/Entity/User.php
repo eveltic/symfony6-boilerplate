@@ -50,12 +50,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupC
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserNotice::class, orphanRemoval: true)]
     private Collection $userNotices;
 
-    #[ORM\Column]
-    private array $backupCodes = [];
-
-    #[ORM\Column]
-    private ?int $trustedVersion = null;
-
     public function __construct()
     {
         $this->userNotices = new ArrayCollection();
@@ -202,55 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, BackupC
                 $userNotice->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getBackupCodes(): array
-    {
-        return $this->backupCodes;
-    }
-
-    public function setBackupCodes(array $backupCodes): self
-    {
-        $this->backupCodes = $backupCodes;
-
-        return $this;
-    }
-
-    public function addBackUpCode(string $backUpCode): void
-    {
-        if (!in_array($backUpCode, $this->backupCodes)) {
-            $this->backupCodes[] = $backUpCode;
-        }
-    }
-
-    public function isBackupCode(string $code): bool
-    {
-        return in_array($code, $this->backupCodes);
-    }
-
-    public function invalidateBackupCode(string $code): void
-    {
-        $key = array_search($code, $this->backupCodes);
-        if ($key !== false){
-            unset($this->backupCodes[$key]);
-        }
-    }
-
-    public function getTrustedTokenVersion(): int
-    {
-        return $this->trustedVersion;
-    }
-    
-    public function getTrustedVersion(): ?int
-    {
-        return $this->trustedVersion;
-    }
-
-    public function setTrustedVersion(int $trustedVersion): self
-    {
-        $this->trustedVersion = $trustedVersion;
 
         return $this;
     }
