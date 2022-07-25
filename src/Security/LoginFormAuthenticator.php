@@ -34,9 +34,8 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     public const FRONTEND_INDEX_ROUTE = 'app_frontend_index_index';
     /**
      * Backend homepage
-     * TODO: Change route
      */
-    public const BACKEND_INDEX_ROUTE = 'app_frontend_index_index';
+    public const BACKEND_INDEX_ROUTE = 'app_backend_index_index';
     /**
      * @var UrlGeneratorInterface
      */
@@ -104,7 +103,7 @@ class LoginFormAuthenticator extends AbstractAuthenticator
     {
         $sEmail = $request->request->get('_username', '');
         $request->getSession()->set(Security::LAST_USERNAME, $sEmail);
-        return new Passport(new UserBadge($sEmail), new PasswordCredentials($request->request->get('_password', '')), [new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),]);
+        return new Passport(new UserBadge($sEmail), new PasswordCredentials($request->request->get('_password', '')), [new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token', '')),]);
     }
 
     /**
