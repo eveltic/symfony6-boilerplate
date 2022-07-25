@@ -122,10 +122,12 @@ class LoginFormAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $this->userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User logged in successfully', 'You have been logged in succesfully', $this->security->getUser());
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
-        $this->userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'User logged in successfully', 'You have been logged in succesfully', $this->security->getUser());
+        
         $sRoute = $this->security->isGranted('ROLE_ADMIN') ? self::BACKEND_INDEX_ROUTE : self::FRONTEND_INDEX_ROUTE;
         return new RedirectResponse($this->urlGenerator->generate($sRoute));
     }
