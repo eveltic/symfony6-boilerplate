@@ -64,7 +64,6 @@ security:
         - { path: ^/security/register, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/verify, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/login, roles: PUBLIC_ACCESS , requires_channel: https }
-        - { path: ^/security/2fa, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/logout, roles: PUBLIC_ACCESS , requires_channel: https }
 
 when@test:

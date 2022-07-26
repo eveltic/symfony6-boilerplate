@@ -15,6 +15,7 @@ class IndexController extends AbstractController
     public function index(Request $request): Response
     {
         dump($request);
+        dump($this->getUser());
         return new Response('<!DOCTYPE html><html><head></head><body>Backend index controller</body></html>');
     }
 }
