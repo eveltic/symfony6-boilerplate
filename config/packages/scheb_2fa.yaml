@@ -17,3 +17,5 @@ scheb_two_factor:
         cookie_same_site: "lax"        # The same-site option of the cookie, can be "lax" or "strict"
         #cookie_domain: ".example.com"  # Domain to use when setting the cookie, fallback to the request domain if not set
         cookie_path: "/"               # Path to use when setting the cookie
+    backup_codes:
+        enabled: true                   # If the backup code feature should be enabled

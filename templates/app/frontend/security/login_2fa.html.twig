@@ -9,6 +9,7 @@
             </div>
             <div class="card-body">
                 <p class="login-box-msg">{{ 'Please provide here the code we have emailed you to sign in'|trans }}</p>
+                <p class="login-box-msg"><small>{{ 'You can also use one of the single use security codes you could have generated previously'|trans }}</small></p>
                     <form method="post" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}">
                         <div class="input-group mb-3">
                             <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" autocomplete="off" autofocus class="form-control" inputmode="numeric" pattern="[0-9]*">
@@ -41,8 +42,8 @@
                     </form>
                     <hr>
                     <div class="row">
-                        <div class="col-12 mb-2">
-                            {{ 'If you cannot complete the authentication you can disconnect or request the code again'|trans }}.
+                        <div class="col-12 text-center mb-2">
+                            <small>{{ 'If you cannot complete the authentication you can disconnect or request the code again'|trans }}.</small>
                         </div>
                         <div class="col-4">
                             <a class="btn btn-danger btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
@@ -51,8 +52,7 @@
                             <a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_2fa_login_resend') }}">{{ 'Request New Code'|trans }}</a>
                         </div>
                     </div>
-                {{ _self.links() }}
-                {{ _self.errors(authenticationErrorData) }}
+                    <script>{% if authenticationError %}toastr.error('{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}');{% endif %}</script>
             </div>
             <!-- /.card-body -->
         </div>

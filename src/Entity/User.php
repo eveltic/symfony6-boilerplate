@@ -12,11 +12,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Scheb\TwoFactorBundle\Model\TrustedDeviceInterface;
+use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, TrustedDeviceInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, TrustedDeviceInterface, BackupCodeInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -58,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column]
     private int $trustedVersion = 0;
+
+    #[ORM\Column]
+    private array $backupCodes = [];
 
     public function __construct()
     {
@@ -282,5 +286,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function getTrustedTokenVersion(): int
     {
         return $this->trustedVersion;
+    }
+
+    public function getBackupCodes(): array
+    {
+        return $this->backupCodes;
+    }
+
+    public function setBackupCodes(array $backupCodes): self
+    {
+        $this->backupCodes = $backupCodes;
+
+        return $this;
+    }
+
+    public function isBackupCode(string $code): bool
+    {
+        return in_array($code, $this->backupCodes);
+    }
+
+    public function invalidateBackupCode(string $code): void
+    {
+        $key = array_search($code, $this->backupCodes);
+        if ($key !== false){
+            unset($this->backupCodes[$key]);
+        }
+    }
+
+    public function addBackUpCode(string $backUpCode): void
+    {
+        if (!in_array($backUpCode, $this->backupCodes)) {
+            $this->backupCodes[] = $backUpCode;
+        }
     }
 }
