@@ -1,0 +1,6 @@
+framework:
+    rate_limiter:
+        scheb_two_factor:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '10 minutes'
