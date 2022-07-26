@@ -14,12 +14,14 @@ use App\Manager\UserNoticeManager;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Scheb\TwoFactorBundle\Security\Authentication\Exception\TwoFactorProviderNotFoundException;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -251,10 +253,17 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/login/2fa/resend', name: '2fa_login_resend')]
-    public function login_2fa_resend(CodeGeneratorInterface $codeGenerator, UserNoticeManager $userNoticeManager): Response
+    public function login_2fa_resend(CodeGeneratorInterface $codeGenerator, UserNoticeManager $userNoticeManager, RateLimiterFactory $schebTwoFactorResendLimiter, Request $request, TranslatorInterface $translator): Response
     {
         // If the user is logged out redirect to login page
         if (!$this->getUser()) { return $this->redirectToRoute('app_frontend_security_login'); }
+
+        $oLimiter = $schebTwoFactorResendLimiter->create($request->getClientIp());
+        $oLimit = $oLimiter->consume(1);
+        if (!$oLimit->isAccepted()) {
+            $this->addFlash('error', sprintf('%s %s.', $translator->trans('You have reached the limit of petitions, you have to wait until'), $oLimit->getRetryAfter()->format('d/m/Y H:i:s')));
+            return new RedirectResponse($this->generateUrl('2fa_login'));
+        }
 
         // Track action
         $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Two factor authentication code forwarded', 'A new code for two factor authentication has been forwarded to the user', $this->getUser());
@@ -262,10 +271,13 @@ class SecurityController extends AbstractController
         // Resend the code
         $codeGenerator->reSend($this->getUser());
 
+        // Flash
+        $this->addFlash('success', sprintf('%s.', $translator->trans('Your auth code has been sent successfully')));
+
         return new RedirectResponse($this->generateUrl('2fa_login'));
     }
 
-    #[Route('/logout/trusted/clear', name: '2fa_login_resend')]
+    #[Route('/logout/trusted/clear', name: '2fa_logout_clear')]
     public function login_2fa_clear_trusted_device(UserRepository $userRepository, UserNoticeManager $userNoticeManager): Response
     {
         // If the user is logged out redirect to login page

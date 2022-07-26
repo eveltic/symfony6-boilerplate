@@ -4,3 +4,7 @@ framework:
             policy: 'fixed_window'
             limit: 5
             interval: '10 minutes'
+        scheb_two_factor_resend:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '10 minutes'

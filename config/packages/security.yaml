@@ -73,7 +73,7 @@ security:
         - { path: ^/security/verify, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/login, roles: PUBLIC_ACCESS , requires_channel: https }
         - { path: ^/security/logout, roles: PUBLIC_ACCESS , requires_channel: https }
-        - { path: ^/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS } # This ensures that the form can only be accessed when two-factor authentication is in progress.
+        - { path: ^/security/login/2fa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS } # This ensures that the form can only be accessed when two-factor authentication is in progress.
 
 when@test:
     security:
