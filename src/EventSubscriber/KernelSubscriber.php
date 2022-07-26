@@ -10,8 +10,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class KernelSubscriber implements EventSubscriberInterface
 {
@@ -19,20 +17,14 @@ class KernelSubscriber implements EventSubscriberInterface
      * @var ParameterBagInterface
      */
     private ParameterBagInterface $parameterBag;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
 
     /**
      * KernelSubscriber constructor.
      * @param ParameterBagInterface $parameterBag
-     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(ParameterBagInterface $parameterBag, UrlGeneratorInterface $urlGenerator)
+    public function __construct(ParameterBagInterface $parameterBag)
     {
         $this->parameterBag = $parameterBag;
-        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -57,7 +49,7 @@ class KernelSubscriber implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => [
-                ['localeEvent', 20]
+                ['localeEvent', 20], 
             ],
         ];
     }
