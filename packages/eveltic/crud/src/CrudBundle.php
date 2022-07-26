@@ -1,5 +1,5 @@
 <?php
-namespace App\Bundles\Crud;
+namespace Eveltic\Crud;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Doctrine\Bundle\CouchDBBundle\DependencyInjection\Compiler\DoctrineCouchDBMappingsPass;
@@ -14,7 +14,7 @@ class CrudBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-    parent::build($container);
+        parent::build($container);
         $this->addRegisterMappingsPass($container);
     }
 
@@ -23,7 +23,7 @@ class CrudBundle extends Bundle
      */
     private function addRegisterMappingsPass(ContainerBuilder $container)
     {
-        $aMappings = ['App\Bundles\Crud\Entity',];
+        $aMappings = ['Eveltic\Crud\Entity',];
         $aDirectories = [realpath(__DIR__ . '/Entity'),];
 
         if (class_exists('Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass')) {
