@@ -11,11 +11,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
+use Scheb\TwoFactorBundle\Model\TrustedDeviceInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, TrustedDeviceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -54,6 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\Column]
     private ?bool $emailAuthEnabled = false;
+
+    #[ORM\Column]
+    private int $trustedVersion = 0;
 
     public function __construct()
     {
@@ -261,5 +265,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     public function setEmailAuthCode(string $authCode): void
     {
         $this->authCode = $authCode;
+    }
+
+    public function getTrustedVersion(): int
+    {
+        return $this->trustedVersion;
+    }
+
+    public function setTrustedVersion(int $trustedVersion): self
+    {
+        $this->trustedVersion = $trustedVersion;
+
+        return $this;
+    }
+    
+    public function getTrustedTokenVersion(): int
+    {
+        return $this->trustedVersion;
     }
 }

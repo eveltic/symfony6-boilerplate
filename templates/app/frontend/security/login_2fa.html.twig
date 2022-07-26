@@ -11,7 +11,7 @@
                 <p class="login-box-msg">{{ 'Please provide here the code we have emailed you to sign in'|trans }}</p>
                     <form method="post" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}">
                         <div class="input-group mb-3">
-                            <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" autocomplete="one-time-code" autofocus class="form-control" inputmode="numeric" pattern="[0-9]*">
+                            <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" autocomplete="off" autofocus class="form-control" inputmode="numeric" pattern="[0-9]*">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-hashtag"></span>

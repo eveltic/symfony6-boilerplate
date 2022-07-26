@@ -251,14 +251,35 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/login/2fa/resend', name: '2fa_login_resend')]
-    public function login_2fa_resend(CodeGeneratorInterface $codeGenerator): Response
+    public function login_2fa_resend(CodeGeneratorInterface $codeGenerator, UserNoticeManager $userNoticeManager): Response
     {
         // If the user is logged out redirect to login page
         if (!$this->getUser()) { return $this->redirectToRoute('app_frontend_security_login'); }
 
+        // Track action
+        $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Two factor authentication code forwarded', 'A new code for two factor authentication has been forwarded to the user', $this->getUser());
+        
         // Resend the code
         $codeGenerator->reSend($this->getUser());
 
         return new RedirectResponse($this->generateUrl('2fa_login'));
+    }
+
+    #[Route('/logout/trusted/clear', name: '2fa_login_resend')]
+    public function login_2fa_clear_trusted_device(UserRepository $userRepository, UserNoticeManager $userNoticeManager): Response
+    {
+        // If the user is logged out redirect to login page
+        if (!$this->getUser()) { return $this->redirectToRoute('app_frontend_security_login'); }
+
+        // Set +1 in trusted version to invalidate the old one
+        $oUser = $this->getUser();
+        $oUser->setTrustedVersion($oUser->getTrustedVersion() + 1);
+        $userRepository->add($oUser, true);
+        
+        // Track action
+        $userNoticeManager->setNotice(UserNoticeConstants::TYPE_SECURITY, 'Current device untrusted', 'This device has been marked as untrusted in the system', $oUser);
+
+        // Go to logout
+        return new RedirectResponse($this->generateUrl('app_frontend_security_logout'));
     }
 }
