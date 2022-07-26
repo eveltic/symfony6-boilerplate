@@ -14,7 +14,9 @@ use App\Manager\UserNoticeManager;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -246,5 +248,17 @@ class SecurityController extends AbstractController
         }
         // Render template with the form
         return $this->render('app/frontend/security/register.html.twig', ['oForm' => $oForm->createView(), ]);
+    }
+
+    #[Route('/login/2fa/resend', name: '2fa_login_resend')]
+    public function login_2fa_resend(CodeGeneratorInterface $codeGenerator): Response
+    {
+        // If the user is logged out redirect to login page
+        if (!$this->getUser()) { return $this->redirectToRoute('app_frontend_security_login'); }
+
+        // Resend the code
+        $codeGenerator->reSend($this->getUser());
+
+        return new RedirectResponse($this->generateUrl('2fa_login'));
     }
 }

@@ -1,0 +1,62 @@
+{% extends 'app/frontend/security/_template.html.twig' %}
+{%block title %}{{ 'Two Factor Login'|trans }}{% endblock %}
+{% block body %}
+<div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="{{ path('app_frontend_index_index') }}" class="h1"><img src="{{ asset(getEnv('APP_LOGO')) }}" alt="{{ getEnv('APP_TITLE')|raw }}" class="brand-image img-size-50"> {{ getEnv('APP_TITLE_HTML')|raw }}</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">{{ 'Please provide here the code we have emailed you to sign in'|trans }}</p>
+                    <form method="post" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}">
+                        <div class="input-group mb-3">
+                            <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" autocomplete="one-time-code" autofocus class="form-control" inputmode="numeric" pattern="[0-9]*">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-hashtag"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% if displayTrustedOption %}
+                            <div class="col-12 mb-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="_trusted" name="{{ trustedParameterName }}">
+                                    <label class="checkbox-custom custom-control-label required" for="_trusted">
+                                        {{ "trusted"|trans({}, 'SchebTwoFactorBundle') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                            {% endif %}
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-block">{{ 'Complete sign in'|trans }}</button>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        {% if isCsrfProtectionEnabled %}
+                            <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                        {% endif %}
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            {{ 'If you cannot complete the authentication you can disconnect or request the code again'|trans }}.
+                        </div>
+                        <div class="col-4">
+                            <a class="btn btn-danger btn-block" href="{{ path('app_frontend_security_logout') }}">{{ 'Logout'|trans }}</a>
+                        </div>
+                        <div class="col-8">
+                            <a class="btn btn-primary btn-block" href="{{ path('app_frontend_security_2fa_login_resend') }}">{{ 'Request New Code'|trans }}</a>
+                        </div>
+                    </div>
+                {{ _self.links() }}
+                {{ _self.errors(authenticationErrorData) }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
+{% endblock %}
