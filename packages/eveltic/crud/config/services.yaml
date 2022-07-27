@@ -1,0 +1,8 @@
+services:
+    Eveltic\Crud\CrudFactory:
+      public: false
+      arguments: ['@request_stack']
+    eveltic.crud.crud_factory:
+        public: true
+        alias:     Eveltic\Crud\CrudFactory
+    

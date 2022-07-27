@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     private int $trustedVersion = 0;
 
     #[ORM\Column]
-    private array $backupCodes = [];
+    private ?array $backupCodes = [];
 
     public function __construct()
     {
@@ -290,12 +290,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     public function getBackupCodes(): array
     {
-        return $this->backupCodes;
+        return is_null($this->backupCodes) ? [] : $this->backupCodes;
     }
 
-    public function setBackupCodes(array $backupCodes): self
+    public function setBackupCodes(?array $backupCodes): self
     {
-        $this->backupCodes = $backupCodes;
+        $this->backupCodes = (empty($backupCodes) ? [] : $backupCodes);
 
         return $this;
     }

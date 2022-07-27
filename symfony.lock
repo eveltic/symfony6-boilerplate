@@ -35,6 +35,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "eveltic/crud": {
+        "version": "dev-main"
+    },
     "friendsofsymfony/jsrouting-bundle": {
         "version": "3.2",
         "recipe": {

@@ -1450,7 +1450,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/eveltic/crud",
-                "reference": "cffba5fa0ca0f1e521505637100d388100d19263"
+                "reference": "da71475b47d95927a723001291fb2a4d0f11df15"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -1479,7 +1479,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/eveltic/form-upload",
-                "reference": "8079902ffe31d8bc3e3bffd38114f276d83cf10f"
+                "reference": "3a5ff90e9a57463720bee2db78a1d8c683ef14bd"
             },
             "type": "library",
             "autoload": {
