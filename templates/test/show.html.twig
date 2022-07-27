@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<title>User</title>
+
+{% block body %}
+    <h1>User</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td>{{ user.password }}</td>
+            </tr>
+            <tr>
+                <th>Uuid</th>
+                <td>{{ user.uuid }}</td>
+            </tr>
+            <tr>
+                <th>State</th>
+                <td>{{ user.state }}</td>
+            </tr>
+            <tr>
+                <th>Data</th>
+                <td>{{ user.data ? user.data|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>IsVerified</th>
+                <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>AuthCode</th>
+                <td>{{ user.authCode }}</td>
+            </tr>
+            <tr>
+                <th>EmailAuthEnabled</th>
+                <td>{{ user.emailAuthEnabled ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>TrustedVersion</th>
+                <td>{{ user.trustedVersion }}</td>
+            </tr>
+            <tr>
+                <th>BackupCodes</th>
+                <td>{{ user.backupCodes ? user.backupCodes|json_encode : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_test_index') }}">back to list</a>
+
+    <a href="{{ path('app_test_edit', {'id': user.id}) }}">edit</a>
+
+    {{ include('test/_delete_form.html.twig') }}
+{% endblock %}
