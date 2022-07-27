@@ -3,13 +3,15 @@
 namespace App\EventSubscriber;
 
 use InvalidArgumentException;
-use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class KernelSubscriber implements EventSubscriberInterface
 {
@@ -51,15 +53,18 @@ class KernelSubscriber implements EventSubscriberInterface
             KernelEvents::REQUEST => [
                 ['localeEvent', 20], 
             ],
+            KernelEvents::EXCEPTION => [
+                ['onKernelException', 2],
+            ]
         ];
     }
 
-    /**
-     * localeEvent
-     *
-     * @param  mixed $event
-     * @return void
-     */
+    public function onKernelException(ExceptionEvent $event): void
+    {
+        $exception = $event->getThrowable();
+        if (!$exception instanceof AccessDeniedException) { return; }
+    }
+
     public function localeEvent(RequestEvent $event): void
     {
         // Do not use sub requests
