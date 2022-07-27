@@ -10,9 +10,33 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 abstract class AbstractCrudController extends AbstractController// implements CrudControllerInterface
 {
-    #[Route('/edit', name: 'edit')]
-    public function edit(): Response
+    #[Route('/', name: 'index', methods: ['GET'])]
+    public function index(): Response
     {
-        return new Response('<!DOCTYPE html><html><head></head><body>Eveltic Crud Edit controller</body></html>');
+        return new Response(sprintf('<!DOCTYPE html><html><head></head><body>Eveltic Crud Controller <strong>%s</strong></body></html>', __FUNCTION__));
+    }
+
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function new(): Response
+    {
+        return new Response(sprintf('<!DOCTYPE html><html><head></head><body>Eveltic Crud Controller <strong>%s</strong></body></html>', __FUNCTION__));
+    }
+
+    #[Route('/{id}/read', name: 'read', methods: ['GET'])]
+    public function read(): Response
+    {
+        return new Response(sprintf('<!DOCTYPE html><html><head></head><body>Eveltic Crud Controller <strong>%s</strong></body></html>', __FUNCTION__));
+    }
+
+    #[Route('/{id}/update', name: 'update', methods: ['GET', 'POST'])]
+    public function update(): Response
+    {
+        return new Response(sprintf('<!DOCTYPE html><html><head></head><body>Eveltic Crud Controller <strong>%s</strong></body></html>', __FUNCTION__));
+    }
+
+    #[Route('/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
+    public function delete(): Response
+    {
+        return new Response(sprintf('<!DOCTYPE html><html><head></head><body>Eveltic Crud Controller <strong>%s</strong></body></html>', __FUNCTION__));
     }
 }
