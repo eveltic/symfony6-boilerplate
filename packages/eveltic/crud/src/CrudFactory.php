@@ -4,6 +4,7 @@ namespace Eveltic\Crud;
 
 
 use Doctrine\ORM\QueryBuilder;
+use Eveltic\Crud\Configuration\Group\AccessGroup;
 use Eveltic\Crud\Configuration\Group\FieldGroup;
 use Eveltic\Crud\Exception\ConfigurationException;
 
@@ -13,7 +14,7 @@ final class CrudFactory
     private $allowedConfigurations = [
         QueryBuilder::class,
         FieldGroup::class,
-        //Accesses::class,
+        AccessGroup::class,
         //Buttons::class,
         //Actions::class,
         //Texts::class,

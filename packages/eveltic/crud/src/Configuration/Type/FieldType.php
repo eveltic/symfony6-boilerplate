@@ -112,9 +112,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param array|null $options
-     * @return Field
+     * @return self
      */
-    public function setOptions(?array $options): Field
+    public function setOptions(?array $options): self
     {
         $this->options = $options;
         return $this;
@@ -130,9 +130,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param mixed $field
-     * @return Field
+     * @return self
      */
-    public function setField($field): Field
+    public function setField($field): self
     {
         $this->field = $field;
         return $this;
@@ -148,10 +148,10 @@ class FieldType implements TypeInterface
 
     /**
      * @param $type
-     * @return Field
+     * @return self
      * @throws FieldException
      */
-    public function setType($type): Field
+    public function setType($type): self
     {
         $this->type = $this->validateType($type);
         return $this;
@@ -178,9 +178,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param string $title
-     * @return Field
+     * @return self
      */
-    public function setTitle(string $title): Field
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -196,9 +196,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param bool $searchable
-     * @return Field
+     * @return self
      */
-    public function setSearchable(bool $searchable): Field
+    public function setSearchable(bool $searchable): self
     {
         $this->searchable = $searchable;
         return $this;
@@ -214,9 +214,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param bool $sortable
-     * @return Field
+     * @return self
      */
-    public function setSortable(bool $sortable): Field
+    public function setSortable(bool $sortable): self
     {
         $this->sortable = $sortable;
         return $this;
@@ -232,9 +232,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param bool|null $translatable
-     * @return Field
+     * @return self
      */
-    public function setTranslatable(?bool $translatable): Field
+    public function setTranslatable(?bool $translatable): self
     {
         $this->translatable = $translatable;
         return $this;
@@ -250,9 +250,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param array|null $roles
-     * @return Field
+     * @return self
      */
-    public function setRoles(?array $roles): Field
+    public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
         return $this;
@@ -268,9 +268,9 @@ class FieldType implements TypeInterface
 
     /**
      * @param bool|null $raw
-     * @return Field
+     * @return self
      */
-    public function setRaw(?bool $raw): Field
+    public function setRaw(?bool $raw): self
     {
         $this->raw = $raw;
         return $this;
