@@ -5,7 +5,11 @@ namespace Eveltic\Crud;
 
 use Doctrine\ORM\QueryBuilder;
 use Eveltic\Crud\Configuration\Group\AccessGroup;
+use Eveltic\Crud\Configuration\Group\ActionGroup;
+use Eveltic\Crud\Configuration\Group\ButtonGroup;
 use Eveltic\Crud\Configuration\Group\FieldGroup;
+use Eveltic\Crud\Configuration\Group\FormGroup;
+use Eveltic\Crud\Configuration\Group\TextGroup;
 use Eveltic\Crud\Exception\ConfigurationException;
 
 final class CrudFactory
@@ -15,10 +19,10 @@ final class CrudFactory
         QueryBuilder::class,
         FieldGroup::class,
         AccessGroup::class,
-        //Buttons::class,
-        //Actions::class,
-        //Texts::class,
-        //Forms::class,
+        ButtonGroup::class,
+        ActionGroup::class,
+        TextGroup::class,
+        FormGroup::class,
     ];
 
     public function __construct(object ...$configuration)
@@ -26,7 +30,7 @@ final class CrudFactory
         $this->setCrudControllerMetadata();
 
         foreach ($configuration as $key => $value) {
-            $sClassName = explode('\\', get_class($value));
+            $sClassName = explode('\\', $value::class);
             $sClassName = strtolower(end($sClassName));
             $this->setConfiguration($sClassName, $value);
         }
