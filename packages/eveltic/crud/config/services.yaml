@@ -1,4 +1,12 @@
 services:
+    configuration_groups:
+        - Doctrine\ORM\QueryBuilder:
+        - Eveltic\Crud\Configuration\Group\AccessGroup:
+        - Eveltic\Crud\Configuration\Group\ActionGroup:
+        - Eveltic\Crud\Configuration\Group\ButtonGroup:
+        - Eveltic\Crud\Configuration\Group\FieldGroup:
+        - Eveltic\Crud\Configuration\Group\FormGroup:
+        - Eveltic\Crud\Configuration\Group\TextGroup:
 ##    Eveltic\Crud\CrudFactory:
 ##      public: false
 ##      arguments: ['@request_stack']

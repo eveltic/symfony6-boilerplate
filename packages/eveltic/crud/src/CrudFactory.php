@@ -27,6 +27,8 @@ final class CrudFactory
 
     public function __construct(object ...$configuration)
     {
+        
+
         $this->setCrudControllerMetadata();
 
         foreach ($configuration as $key => $value) {
