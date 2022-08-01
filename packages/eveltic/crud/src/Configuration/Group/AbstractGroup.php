@@ -15,6 +15,11 @@ abstract class AbstractGroup implements GroupInterface
         $this->setChilds($childs);
     }
 
+    public function getChild(?string $key = null): mixed
+    {
+        return isset($this->childs[$key]) ? $this->childs[$key] : null;
+    }
+
     public function getChilds(?string $key = null): mixed
     {
         return isset($this->childs[$key]) ? $this->childs[$key] : $this->childs;

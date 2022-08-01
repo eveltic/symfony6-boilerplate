@@ -54,12 +54,14 @@ class UserController extends AbstractCrudController
 
         $texts = new TextGroup(
             new TextType('title', 'all', 'Users', true),
+            new TextType('description', 'all', 'Description text for all', true),
+            new TextType('description', 'update', 'Description text for index', true),
             new TextType('h1', 'index', 'Users', true),
             new TextType('h2', 'index', 'Management', true),
             new TextType('h1', 'create', 'Users', true),
             new TextType('h2', 'create', 'Create', true),
-            new TextType('h1', 'edit', 'Users', true),
-            new TextType('h2', 'edit', 'Edit', true)/*,
+            new TextType('h1', 'update', 'Users', true),
+            new TextType('h2', 'update', 'Edit', true)/*,
             new TextType('h1', 'clone', 'Vehicle', true),
             new TextType('h2', 'clone', 'Clone', true)*/
         );

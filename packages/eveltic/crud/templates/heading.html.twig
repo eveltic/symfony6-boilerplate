@@ -1,0 +1,106 @@
+{% if configuration is defined and crud is defined %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                {% set textgroup = configuration.getConfiguration('textgroup') %}
+                {% set method = configuration.getConfiguration('method') %}
+                {% set route = configuration.getConfiguration('route') %}
+                {% set allTitle = (attribute(textgroup, 'getChild') is defined and textgroup.getChild('all_title') is defined and textgroup.getChild('all_title') is not empty) ? textgroup.getChild('all_title') : null %}
+                {% set allDescription = (attribute(textgroup, 'getChild') is defined and textgroup.getChild('all_description') is defined and textgroup.getChild('all_description') is not empty) ? textgroup.getChild('all_description') : null %}
+                {% set description = (attribute(textgroup, 'getChild') is defined and textgroup.getChild(method ~ '_description') is defined and textgroup.getChild(method ~ '_description') is not empty) ? textgroup.getChild(method ~ '_description') : null %}
+                {% set h1 = (attribute(textgroup, 'getChild') is defined and textgroup.getChild(method ~ '_h1') is defined and textgroup.getChild(method ~ '_h1') is not empty) ? textgroup.getChild(method ~ '_h1') : null %}
+                {% set h2 = (attribute(textgroup, 'getChild') is defined and textgroup.getChild(method ~ '_h2') is defined and textgroup.getChild(method ~ '_h2') is not empty) ? textgroup.getChild(method ~ '_h2') : null %}
+
+                {% if h1 is not empty %}
+                    <div class="col-auto">
+                        <h1>{{ h1.translatable == true ? h1.title|trans : h1.title }}</h1>
+                    </div>
+                {% elseif configuration.getConfiguration('querybuilder').dqlparts.from[0].alias is defined %}
+                    <div class="col-auto">
+                        <h1>
+                            {{ configuration.getConfiguration('querybuilder').dqlparts.from[0].alias|trans()|lower|capitalize }}
+                        </h1>
+                    </div>
+                {% endif %}
+                {% if h2 is not empty %}
+                    <div class="col-auto">
+                        <h2 class="text-xs text-gray-500">{{ h2.translatable == true ? h2.title|trans : h2.title }}</h2>
+                    </div>
+                {% else %}
+                    <div class="col-auto">
+                        <h2 class="text-xs text-gray-500">
+                            {{ method|trans() }}
+                        </h2>
+                    </div>
+                {% endif %}
+                <div class="col text-right">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a href="{{ path('app_backend_index_index') }}">{{ 'Dashboard'|trans }}</a></li>
+                        <li class="breadcrumb-item {% if method == 'index' %}active{% endif %}">
+                            <a href="{{ path(route ~ 'index') }}">
+                                {% if allTitle is not empty %}
+                                    {{ allTitle.translatable == true ? allTitle.title|trans : allTitle.title }}
+                                {% elseif configuration.getConfiguration('querybuilder').dqlparts.from[0].alias is defined %}
+                                    {{ configuration.getConfiguration('querybuilder').dqlparts.from[0].alias|trans()|lower|capitalize }}
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% if method in ['update', 'read', 'clone'] %}
+                            <li class="breadcrumb-item active">{{ method|lower|capitalize|trans }}: {{ object }}</li>
+                        {% endif %}
+                        {% if method == 'create' %}
+                            <li class="breadcrumb-item active">{{ 'Create'|trans }}</li>
+                        {% endif %}
+                    </ol>
+                </div>
+            </div><!-- /.row mb-2-->
+        {% if method in ['update', 'read', 'clone', 'create'] %}
+            <div class="row mb-2">
+                <a href="javascript:void();" onClick="goBack();" class="btn btn-secondary btn-icon-split mb-3 mr-1">
+                    <span class="icon text-white-50 mr-1"><i class="fas fa-undo"></i></span>
+                    <span class="text">{{ 'Go back'|trans }}</span>
+                </a>
+                {# TODO: Modificar cuando se creen los métodos de update/clone/create #}
+                {# TODO: Falta el scripts.html.twig y el translatableForm.html.twig #}
+                {# {% if method == 'update' %}
+                    {% set primary_key = isUuid(form.vars.value.id) ? form.vars.value.id|toRfc4122 : form.vars.value.id %}
+                    {% if (oConfiguration.configuration['settings'].settings['remove'].access is not defined or oConfiguration.configuration['settings'].settings['remove'].access == true) and (oConfiguration.configuration['accesses'].methods['remove'].roles is not defined or oConfiguration.configuration['accesses'].methods['remove'].roles is empty or oConfiguration.configuration['accesses'].methods['remove'].roles|userHasRole) and routeExists(oConfiguration.configuration['route_main_name'] ~ 'remove') %}
+                        <a href="javascript:void();" data-href="{{ path(oConfiguration.configuration['route_main_name'] ~ 'remove', {'_id': primary_key }) }}" class="btn btn-danger btn-icon-split mb-3 mr-1 single-remove-action" data-return-url="{{ path(oConfiguration.configuration['route_main_name'] ~ 'index') }}" data-confirm="{{ 'Are you sure to delete this item?'|trans }}"><span class="icon text-white-50 mr-1"><i class="fas fa-trash"></i></span><span class="text">{{ 'Remove entry'|trans }}</span></a>
+                    {% endif %}
+                {% endif %}
+                {% if method != 'read' %}
+                    <div id="submitButtons">
+                        <button type="button" class="btn btn-primary">
+                            <i class="spinner-border spinner-border-sm sm"></i></button>
+                    </div>
+                    <script>
+                        $(function() {
+                            if ($('form.crudForm input:submit').length === 0) {
+                                var createButton = "<button onclick='$(\"form[name={{ oForm.vars.name }}\").first().submit();' class='btn btn-primary mr-1'><i class='fas fa-save mr-1'></i>{{ 'Submit'|trans }}</button>";
+                                var createAndNewButton = {% if (oConfiguration.configuration['settings'].settings['create'].access is not defined or oConfiguration.configuration['settings'].settings['create'].access == true) and (oConfiguration.configuration['accesses'].methods['create'].roles is not defined or oConfiguration.configuration['accesses'].methods['create'].roles is empty or oConfiguration.configuration['accesses'].methods['create'].roles|userHasRole) and oConfiguration.configuration.forms.forms['create'] is defined and routeExists(oConfiguration.configuration['route_main_name'] ~ 'create') %}"<button onclick='$(\"form[name={{ oForm.vars.name }}\").first().append(\"<input type=hidden name=redirectToCreate value=1>\").submit();' class='btn btn-primary mr-1'><i class='fas fa-share-square mr-1'></i>{{ 'Submit and New entry'|trans }}</button>"
+                                {% else %}""{% endif %};
+                                $('#submitButtons').html(createButton + createAndNewButton);
+                            }
+                        });
+                    </script>
+                {% endif %} #}
+                {% if allDescription is not empty %}
+                    <div class="row mb-2">{{ allDescription.translatable == true ? allDescription.title|trans : allDescription.title }}</div>
+                {% endif %}
+                {% if description is not empty %}
+                    <div class="row mb-2">{{ description.translatable == true ? description.title|trans : description.title }}</div>
+                {% endif %}
+            </div>
+        {% endif %}            
+        </div><!-- /.container-fluid -->
+    </section>
+        {% if method == 'read' %}
+        <script>
+            $(function() {
+                $("#crudForm :input").prop("disabled", true);
+            });
+        </script>
+    {% endif %}
+{% endif %}
