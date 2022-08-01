@@ -1848,6 +1848,11 @@ bootstrap-daterangepicker@^2.1.25:
     jquery ">=1.10"
     moment "^2.9.0"
 
+bootstrap-icons@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/bootstrap-icons/-/bootstrap-icons-1.9.1.tgz#cf22d91a25447645e45c49ebde4e56eafdfe761b"
+  integrity sha512-d4ZkO30MIkAhQ2nNRJqKXJVEQorALGbLWTuRxyCTJF96lRIV6imcgMehWGJUiJMJhglN0o2tqLIeDnMdiQEE9g==
+
 bootstrap-slider@^11.0.2:
   version "11.0.2"
   resolved "https://registry.npmjs.org/bootstrap-slider/-/bootstrap-slider-11.0.2.tgz"
@@ -1857,6 +1862,11 @@ bootstrap-switch@3.3.4:
   version "3.3.4"
   resolved "https://registry.npmjs.org/bootstrap-switch/-/bootstrap-switch-3.3.4.tgz"
   integrity sha512-7YQo+Ir6gCUqC36FFp1Zvec5dRF/+obq+1drMtdIMi9Xc84Kx63Evi0kdcp4HfiGsZpiz6IskyYDNlSKcxsL7w==
+
+bootstrap-table@^1.20.2:
+  version "1.20.2"
+  resolved "https://registry.yarnpkg.com/bootstrap-table/-/bootstrap-table-1.20.2.tgz#187fcd1812fa3422f964e3b32e3fc3d266108a83"
+  integrity sha512-6j9zfjjK6VZyJj8KsH+LnGczqglmMvMctGAoEAKDvrQ92ExQbA3mHGYPQr9iPrzoyeGL8+6Dyx6LqJbWmWmBoA==
 
 bootstrap-timepicker@^0.5.2:
   version "0.5.2"

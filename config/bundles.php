@@ -18,5 +18,6 @@ return [
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
     Knp\Bundle\MenuBundle\KnpMenuBundle::class => ['all' => true],
     Scheb\TwoFactorBundle\SchebTwoFactorBundle::class => ['all' => true],
-    Eveltic\Crud\CrudBundle::class => ['all' => true],
+    Eveltic\Crud\EvelticCrudBundle::class => ['all' => true],
+    HelloSebastian\HelloBootstrapTableBundle\HelloBootstrapTableBundle::class => ['all' => true],
 ];

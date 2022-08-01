@@ -1,0 +1,197 @@
+{% extends 'app/backend/_template.html.twig' %}
+{% if mode is not defined %}{% set mode = 'light' %}{% endif %}
+{% block title %}{{ 'Crud Test'|trans }}{% endblock %}
+{% block body %}
+
+        {{dump(configuration)}}
+        {{dump(crud)}}
+
+        {% if configuration is defined and crud is defined %}
+            {% set lastPage = crud.pages['max'] %}
+            {% set currentPage = crud.pages['page'] %}
+            {% set count = crud.pages['count'] %}
+            {% set totalCount = crud.pages['total_count'] %}
+            {% set extremePagesLimit = 2 %}
+            {% set nearbyPagesLimit = 4 %}
+            {% set showAlwaysFirstAndLast = false %}
+            {% set method = configuration.getConfiguration('method') %}
+            {% set accessgroup = configuration.getConfiguration('accessgroup') %}
+            {% set fieldgroup = configuration.getConfiguration('fieldgroup') %}
+            {% set currentRoute = app.request.attributes.get('_route') %}
+            {% set userCanAccess = (attribute(accessgroup, 'getChilds') is defined) and (accessgroup.getChilds(method).roles is not defined or accessgroup.getChilds(method).roles is empty or accessgroup.getChilds(method).roles|userHasRole) %}
+            {% set userCanOrder =  (attribute(accessgroup, 'getChilds') is defined) and accessgroup.getChilds('order').access == true and (accessgroup.getChilds('order').roles is not defined or accessgroup.getChilds('order').roles is empty or accessgroup.getChilds('order').roles|userHasRole) %}
+            {% set userCanSearch =  (attribute(accessgroup, 'getChilds') is defined) and accessgroup.getChilds('search').access == true and (accessgroup.getChilds('search').roles is not defined or accessgroup.getChilds('search').roles is empty or accessgroup.getChilds('search').roles|userHasRole) %}
+            {% if userCanAccess %}
+                {% include "@EvelticCrud/pagination.html.twig" with {'configuration': configuration} %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-valign-middle table-hover table-striped responsive{{ mode == 'dark' ? ' table-dark' }}">
+                            {% if userCanOrder or userCanSearch %}
+                                <thead>
+                                    <tr>
+                                    {% for key, title in crud.tableColumns %}
+                                        {% set fieldKey = fieldgroup.getChilds(key|split('_', 2)|join('.')) is defined ? key|split('_', 2)|join('.') : key %}
+                                        {% set fieldType = fieldgroup.getChilds(fieldKey) %}
+                                        {% set fieldTitle = fieldType.translatable is defined and fieldType.translatable == true ? (fieldType.title|length > 0 ? fieldType.title|trans : title|trans) : (fieldType.title|length > 0 ? fieldType.title : title) %}
+                                        <th scope="col"{% if loop.index == 1 %} colspan="2"{% endif %}>
+                                            <div class="input-group input-group-sm align-middle">
+                                                {% if userCanOrder %}
+                                                    {% if fieldType.sortable == true %}
+                                                        <div class="input-group-prepend">
+                                                            <a href="javascript:void();" class="btn btn-secondary form-filter-sort" data-field="{{ key }}" data-sort="">
+                                                                <i class="spinner-border spinner-border-sm sm"></i>
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if '(' not in title and ')' not in title %}{# Calculated field, cannot search it directly #}
+                                                    {% if userCanSearch %}
+                                                        {% if fieldType.searchable == true %}
+                                                            {# <div class="input-group input-group-sm"> #}
+                                                            <div class="input-group-prepend">
+                                                                <button type="button" class="btn btn-primary dropdown-toggle" id="{{ key }}_update-search-button" data-toggle="dropdown">
+                                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                                                                </button>
+                                                                <div class="dropdown-menu update-title">
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="like" href="javascript:void();">&#42;&nbsp;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="eq" href="javascript:void();">&#61;&nbsp;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="neq" href="javascript:void();">&#33;&#61;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="lt" href="javascript:void();">&lt;&nbsp;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="gt" href="javascript:void();">&gt;&nbsp;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="lte" href="javascript:void();">&lt;&#61;</a>
+                                                                    <a class="dropdown-item update-search-input" data-field="{{ key }}" data-operator="gte" href="javascript:void();">&gt;&#61;</a>
+                                                                </div>
+                                                            </div>
+                                                            <input type="text" class="form-control form-filter-field sm" id="{{ key }}_update-search-input" data-field="{{ key }}" data-operator="like" aria-label="{{ 'Search input'|trans }}" placeholder="{{ 'Search'|trans }} {{ fieldTitle|trans }}..">
+                                                            {# </div> #}
+                                                        {% else %}
+                                                            <span class="ml-2 mt-1">{{ fieldTitle }}</span>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="ml-2 mt-1">{{ fieldTitle }}</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="ml-2 mt-1">{{ fieldTitle }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </th>
+                                    {% endfor %}
+                                        <th scope="col" class="text-right align-middle">
+                                            <div class="btn-group">
+                                                <a href="{{ path(currentRoute) }}" class="btn btn-warning btn-sm"><i class="fas fa-times"></i></a>
+                                                <a href="javascript:void();" class="btn btn-success btn-sm apply-filter" data-route="{{ currentRoute }}"><i class="fas fa-search"></i></a>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                            {% endif %}
+                            <tbody>
+                                {% for field in crud.paginator.iterator %}
+                                    {% set primary_key = isUuid(field.primary_key) ? field.primary_key|toRfc4122 : field.primary_key %}
+                                    <tr>
+                                        <td scope="row" style="width:20px; vertical-align:top;">
+                                            <input aria-label="{{ 'Select all'|trans }}" style="cursor: pointer;" type="checkbox" value="{{ primary_key }}" class="selectable"/>
+                                        </td>
+                                        {% for key, title in crud.tableColumns %}
+                                            {% set fieldColumn = key|replace({' ': '_'}) %} {# Set field back to entity.field from table column header #}
+                                            {% set fieldKey = fieldgroup.getChilds(key|split('_', 2)|join('.')) is defined ? key|split('_', 2)|join('.') : key %}
+                                            {% set fieldType = fieldgroup.getChilds(fieldKey) %}
+                                            {% set fieldTitle = fieldType.translatable is defined and fieldType.translatable == true ? (fieldType.title|length > 0 ? fieldType.title|trans : title|trans) : (fieldType.title|length > 0 ? fieldType.title : title) %}
+                                            {% set value = ' as ' not in key|lower ? attribute(field, fieldColumn) : key|lower|split(' as ', 2)[1] %}
+                                            {% if fieldType.raw == true %}
+                                                <td scope="row" data-label="{{ fieldTitle }}">{{ crudField(fieldType.type, value, field)|raw }}</td>
+                                            {% else %}
+                                                <td scope="row" data-label="{{ fieldTitle }}">{{ crudField(fieldType.type, value, field) }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% set buttongroup = configuration.getConfiguration('buttongroup') %}
+                                        {% set userHasButtons = (attribute(buttongroup, 'getChilds') is defined) and buttongroup.getChilds()|length > 0 %}
+                                        <td scope="row" class="text-right" data-label="{{ 'Actions'|trans }}">
+                                            <div class="btn-group">
+                                                {% if userHasButtons %}
+
+                                                    {# Check if the user has access to any button in order to show the main button #}
+                                                    {% set showButtons = false %}
+                                                    {% for button in buttongroup.getChilds() %}
+                                                        {% if showButtons == false %}
+                                                            {% if button.roles is not defined or button.roles is empty or button.roles|userHasRole %}
+                                                                {% set showButtons = true %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if showButtons == true %}
+                                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"></button>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            {% for button in buttongroup.getChilds() %}
+                                                                {% if button.roles is not defined or button.roles is empty or button.roles|userHasRole %}
+                                                                    {% set buttonParams = {} %}
+                                                                    {% if button.route.params is defined %}
+                                                                        {% for paramKey,paramValue in button.route.params %}
+                                                                            {% set paramValueDatabaseForm = paramValue|split('.', 2)|join('_') %}
+                                                                            {% if paramValueDatabaseForm in field|keys %}
+                                                                                {% set buttonParams = buttonParams|merge({ (paramKey): attribute(field, paramValueDatabaseForm)}) %}
+                                                                            {% else %}
+                                                                                {% set buttonParams = buttonParams|merge({ (paramKey): paramValueDatabaseForm??''}) %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                        {% set buttonParams = button.route.params|merge(buttonParams) %}
+                                                                    {% endif %}
+                                                                    {% set buttonHref = (button.route is iterable) ? path(button.route.name, buttonParams) : button.route %}
+                                                                    {% if button.options.modal is defined and button.options.modal == true %}
+                                                                        <a class="dropdown-item crud-modal" style="cursor: pointer;" data-href="{{ buttonHref }}"><i class="{{ button.icon|raw }}"></i> {% if button.translatable == true %}{{ button.title|trans }}{% else %}{{ button.title }}{% endif %}
+                                                                        </a>
+                                                                    {% else %}
+                                                                        <a class="dropdown-item" href="{{ buttonHref }}"><i class="{{ button.icon|raw }}"></i> {% if button.translatable == true %}{{ button.title|trans }}{% else %}{{ button.title }}{% endif %}
+                                                                        </a>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if (accessgroup.getChilds('clone').access is not defined or accessgroup.getChilds('clone').access == true) and (accessgroup.getChilds('clone').roles is not defined or accessgroup.getChilds('clone').roles is empty or accessgroup.getChilds('clone').roles|userHasRole) and configuration.getConfiguration('formgroup').getChilds('clone') is defined and routeExists(configuration.getConfiguration('route') ~ 'clone', {'id': primary_key}) and (accessgroup.getChilds('clone').callback is defined  and executeClosure(accessgroup.getChilds('clone').callback, [field])) %}
+                                                    <a href="{{ path(configuration.getConfiguration('route') ~ 'clone', {'id': primary_key}) }}" class="btn btn-secondary btn-sm"><i class="fas fa-clone"></i></a>
+                                                {% endif %}
+
+                                                {% if (accessgroup.getChilds('update').access is not defined or accessgroup.getChilds('update').access == true) and (accessgroup.getChilds('update').roles is not defined or accessgroup.getChilds('update').roles is empty or accessgroup.getChilds('update').roles|userHasRole) and configuration.getConfiguration('formgroup').getChilds('update') is defined and routeExists(configuration.getConfiguration('route') ~ 'update', {'id': primary_key}) and (accessgroup.getChilds('update').callback is defined  and executeClosure(accessgroup.getChilds('update').callback, [field])) %}
+                                                    <a href="{{ path(configuration.getConfiguration('route') ~ 'update', {'id': primary_key}) }}" class="btn btn-warning btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                                {% endif %}
+                                                {% if (accessgroup.getChilds('read').access is not defined or accessgroup.getChilds('read').access == true) and (accessgroup.getChilds('read').roles is not defined or accessgroup.getChilds('read').roles is empty or accessgroup.getChilds('read').roles|userHasRole) and configuration.getConfiguration('formgroup').getChilds('read') is defined and routeExists(configuration.getConfiguration('route') ~ 'read', {'id': primary_key}) and (accessgroup.getChilds('read').callback is defined  and executeClosure(accessgroup.getChilds('read').callback, [field])) %}
+                                                    <a href="{{ path(configuration.getConfiguration('route') ~ 'read', {'id': primary_key}) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                                {% endif %}
+                                                {% if (accessgroup.getChilds('delete').access is not defined or accessgroup.getChilds('delete').access == true) and (accessgroup.getChilds('delete').roles is not defined or accessgroup.getChilds('delete').roles is empty or accessgroup.getChilds('delete').roles|userHasRole) and routeExists(configuration.getConfiguration('route') ~ 'delete', {'id': primary_key}) and (accessgroup.getChilds('delete').callback is defined  and executeClosure(accessgroup.getChilds('delete').callback, [field])) %}
+                                                    <a href="javascript:void();" data-href="{{ path(configuration.getConfiguration('route') ~ 'delete', {'_id': primary_key }) }}" class="btn btn-danger btn-sm single-remove-action" data-return-url="{{ app.request.requestUri|url_encode }}" data-confirm="{{ 'Are you sure to delete this item?'|trans }}"><i class="fas fa-trash"></i></a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %} 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row pb-1">
+                    <small>{{ 'Showing %count% entries out of %total_count% in %pages% pages'|trans|replace({'%count%': count, '%pages%': lastPage, '%total_count%': totalCount}) }}</small>
+                </div>
+                <input type="hidden" name="collection-action-ids" id="collection-action-ids" value=""/>
+                {% include "@EvelticCrud/pagination.html.twig" with {'configuration': configuration} %}
+                {% include "@EvelticCrud/modal.html.twig" with {'configuration': configuration} %}
+            {% else %}
+                <div class="card mb-4 py-3 border-left-danger">
+                    <div class="card-body">
+                        {{ 'You don\'t have access to this page'|trans }}
+                    </div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="card mb-4 py-3 border-left-danger">
+                <div class="card-body">
+                    {{ 'Crud is not configured in this page'|trans }}
+                </div>
+            </div>
+        {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

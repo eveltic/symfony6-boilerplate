@@ -1,6 +1,6 @@
 <?php
 
-namespace Eveltic\Crud;
+namespace Eveltic\Crud\Configuration;
 
 
 use Doctrine\ORM\QueryBuilder;
@@ -12,7 +12,7 @@ use Eveltic\Crud\Configuration\Group\FormGroup;
 use Eveltic\Crud\Configuration\Group\TextGroup;
 use Eveltic\Crud\Exception\ConfigurationException;
 
-final class CrudFactory
+final class CrudConfiguration
 {
     private $configuration = [];
     private $allowedConfigurations = [
@@ -27,8 +27,6 @@ final class CrudFactory
 
     public function __construct(object ...$configuration)
     {
-        
-
         $this->setCrudControllerMetadata();
 
         foreach ($configuration as $key => $value) {
@@ -39,7 +37,7 @@ final class CrudFactory
     }
 
 /**
-     * @return CrudFactory
+     * @return CrudConfiguration
      * @throws ConfigurationException
      * @throws ReflectionException
      *
@@ -65,12 +63,14 @@ final class CrudFactory
         $aControllerClassRoute = array_filter(explode('_', $routeArguments['name']));
         /* Get processed data from controller metadata */
         $this->configuration['class'] = $controllerClass;
-        $this->configuration['method'] = debug_backtrace()[3]['function'];
+        $this->configuration['method'] = debug_backtrace()[4]['function'];
         $this->configuration['route'] = $routeArguments['name'];
-        $this->configuration['name'] = strtolower(str_replace('Controller', '', array_slice(explode('\\', $controllerClass), -1)[0]));
+        $this->configuration['route_data'] = sprintf('%sdata', $this->configuration['route']);
+        $this->configuration['controller'] = strtolower(str_replace('Controller', '', array_slice(explode('\\', $controllerClass), -1)[0]));
         $this->configuration['bundle'] = explode('\\', $controllerClass)[1] === 'Controller' ? 'app' : strtolower(explode('\\', $controllerClass)[2]);
         $this->configuration['template_folder'] = ($this->configuration['bundle'] === 'app' ? '' . rtrim(implode('/', $aControllerClassRoute), '/') : '@' . ucfirst(rtrim(implode('/', $aControllerClassRoute), '/'))) . '/';
         $this->configuration['template_error'] = array_filter(explode('/', $this->configuration['template_folder']));array_pop($this->configuration['template_error']);$this->configuration['template_error'] = implode('/', $this->configuration['template_error']) . '/error/';
+        $this->configuration['unique_id'] = md5($this->configuration['class'] . $this->configuration['method'] . $this->configuration['route']);
         
         return $this;
     }

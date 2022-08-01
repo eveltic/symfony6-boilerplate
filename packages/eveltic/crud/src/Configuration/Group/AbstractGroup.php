@@ -15,7 +15,7 @@ abstract class AbstractGroup implements GroupInterface
         $this->setChilds($childs);
     }
 
-    public function getChilds(?string $key = null): array
+    public function getChilds(?string $key = null): mixed
     {
         return isset($this->childs[$key]) ? $this->childs[$key] : $this->childs;
     }

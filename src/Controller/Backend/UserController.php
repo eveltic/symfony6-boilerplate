@@ -4,11 +4,10 @@ namespace App\Controller\Backend;
 
 use App\Entity\User;
 use App\Form\UserType;
-use Doctrine\Persistence\ManagerRegistry;
+use Eveltic\Crud\Configuration\CrudConfiguration;
 use Eveltic\Crud\Configuration\Group\AccessGroup;
 use Eveltic\Crud\Configuration\Group\ButtonGroup;
 use Symfony\Component\Routing\Annotation\Route;
-use Eveltic\Crud\CrudFactory;
 use Eveltic\Crud\Field\StringField;
 use Eveltic\Crud\Field\ArrayField;
 use Eveltic\Crud\Configuration\Type\FieldType;
@@ -24,20 +23,29 @@ use Eveltic\Crud\Controller\AbstractCrudController;
 #[Route('/user', defaults: [], name: 'app_backend_user_')]
 class UserController extends AbstractCrudController
 {
-    protected function configureCrud(ManagerRegistry $doctrine)
+    protected function configureCrud(): CrudConfiguration
     {
-        $queryBuilder = $doctrine->getManager()->createQueryBuilder()->from(User::class, 'user')->select('user.email, user.roles');
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()->from(User::class, 'user')->select('user.email, user.roles');
 
         $fields = new FieldGroup(
             new FieldType('user.email', StringField::class, 'Email', true, true, true, []),
-            new FieldType('user.roles', ArrayField::class, 'Roles', false, false, true, []),
+            new FieldType('user.roles', ArrayField::class, 'Roles', true, true, true, []),
+        );
+
+        
+        $buttons = new ButtonGroup(
+            new ButtonType('impersonating', 'Impersonate', 'fas fa-user-secret', ['name' => 'app_backend_user_index', 'params' => ['_switch_user' => 'user.username']], null, ['ROLE_ROOT'], ['modal' => false]),
+            new ButtonType('google', 'Google', 'fas fa-user', 'https://eveltic.es', null, ['ROLE_ROOT'], ['modal' => true]),
+            new ButtonType('other', 'Other Test', 'fas fa-user', ['name' => 'app_frontend_index_index', 'params' => []], null, ['ROLE_ROOT'], ['modal' => true]),
         );
 
         $accesses = new AccessGroup(
             new AccessType('index', true, ['ROLE_ADMIN'] ),
             new AccessType('create', true, ['ROLE_ADMIN']),
-            new AccessType('edit', true, ['ROLE_ADMIN']),
-            new AccessType('remove', true, ['ROLE_ADMIN']),
+            new AccessType('read', true, ['ROLE_ADMIN']),
+            new AccessType('update', true, ['ROLE_ADMIN']),
+            new AccessType('delete', true, ['ROLE_ADMIN']),
+            new AccessType('clone', true, ['ROLE_ADMIN']),
             new AccessType('export', true, ['ROLE_ADMIN']),
             new AccessType('paginate', true, ['ROLE_ADMIN']),
             new AccessType('search', true, ['ROLE_ADMIN']),
@@ -58,15 +66,10 @@ class UserController extends AbstractCrudController
 
         $forms = new FormGroup(
             new FormType('create', UserType::class, User::class),
-            new FormType('edit', UserType::class, User::class),
+            new FormType('update', UserType::class, User::class),
         );
 
-        $buttons = new ButtonGroup(
-            new ButtonType('impersonating', 'Impersonate', 'fas fa-user-secret', ['name' => 'app_backend_user_index', 'params' => ['_switch_user' => 'user.username']], null, ['ROLE_ROOT'], ['modal' => false]),
-            new ButtonType('google', 'Google', 'fas fa-user', 'https://eveltic.es', null, ['ROLE_ROOT'], ['modal' => true]),
-            new ButtonType('other', 'Other Test', 'fas fa-user', ['name' => 'app_frontend_index_index', 'params' => []], null, ['ROLE_ROOT'], ['modal' => true]),
-        );
-
-        return new CrudFactory($queryBuilder, $fields, $accesses, $texts, $forms, $buttons);
+        // return new CrudConfiguration($queryBuilder, $fields, $texts, $forms, $buttons);
+        return new CrudConfiguration($queryBuilder, $fields, $accesses, $texts, $forms, $buttons);
     }
 }

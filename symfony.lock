@@ -50,6 +50,9 @@
             "./config/routes/fos_js_routing.yaml"
         ]
     },
+    "hello-sebastian/hello-bootstrap-table-bundle": {
+        "version": "v0.8.0"
+    },
     "knplabs/knp-menu-bundle": {
         "version": "v3.2.0"
     },

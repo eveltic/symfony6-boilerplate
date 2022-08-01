@@ -23,8 +23,8 @@ class FormType implements TypeInterface
      */
     private $allowedNames = [
         'create',
-        'edit',
-        'view',
+        'update',
+        'read',
         'clone',
     ];
 

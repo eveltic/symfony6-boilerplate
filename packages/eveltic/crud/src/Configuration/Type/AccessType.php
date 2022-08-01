@@ -29,9 +29,9 @@ class AccessType implements TypeInterface
     private $allowedMethods = [
         'index',
         'create',
-        'edit',
-        'view',
-        'remove',
+        'read',
+        'update',
+        'delete',
         'export',
         'paginate',
         'search',
@@ -42,9 +42,9 @@ class AccessType implements TypeInterface
      * @var array
      */
     private $allowedCallbackMethods = [
-      'edit',
-      'view',
-      'remove',
+      'update',
+      'read',
+      'delete',
       'export',
       'clone',
     ];

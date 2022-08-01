@@ -1,11 +1,9 @@
 <?php
-namespace App\Manager\Crud\Field;
+namespace Eveltic\Crud\Field;
 
 
-/**
- * Class TimeField
- * @package App\Manager\Crud\Field
- */
+use Eveltic\Crud\Field\AbstractField;
+
 class TimeField extends AbstractField
 {
     /**

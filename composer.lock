@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc4e265c780dc583dd6b4b033c5d6ed3",
+    "content-hash": "1015c966e22b77f11a1959a3c4fdc3f1",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1646,6 +1646,56 @@
                 "source": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/tree/3.2.1"
             },
             "time": "2022-07-01T11:50:22+00:00"
+        },
+        {
+            "name": "hello-sebastian/hello-bootstrap-table-bundle",
+            "version": "v0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HelloSebastian/hello-bootstrap-table-bundle.git",
+                "reference": "b396e001b6e4e7f51ecb8cd0af7228d4c2243135"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HelloSebastian/hello-bootstrap-table-bundle/zipball/b396e001b6e4e7f51ecb8cd0af7228d4c2243135",
+                "reference": "b396e001b6e4e7f51ecb8cd0af7228d4c2243135",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/common": "^2.6|^3.0",
+                "doctrine/orm": "^2.6.3",
+                "ext-json": "*",
+                "php": ">=7.2.5",
+                "sensio/framework-extra-bundle": "^5.1|^6.1",
+                "symfony/options-resolver": "^4.4|^5.0|^6.0",
+                "symfony/property-access": "^4.4|^5.0|^6.0",
+                "symfony/security-bundle": "^4.4|^5.0|^6.0",
+                "symfony/twig-bundle": "^4.4|^5.0|^6.0"
+            },
+            "require-dev": {
+                "symfony/webpack-encore-bundle": "^1.12"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "HelloSebastian\\HelloBootstrapTableBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "HelloSebastian"
+                }
+            ],
+            "description": "Symfony Bundle for bootstrap-table",
+            "support": {
+                "issues": "https://github.com/HelloSebastian/hello-bootstrap-table-bundle/issues",
+                "source": "https://github.com/HelloSebastian/hello-bootstrap-table-bundle/tree/v0.8.0"
+            },
+            "time": "2022-05-16T19:13:27+00:00"
         },
         {
             "name": "knplabs/knp-menu",

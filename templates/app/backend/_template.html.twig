@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+   <head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% block title %}{% endblock %} - {{ 'Backend'|trans }}</title>
+		{{ include('widget/favicon.html.twig') }}
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('backend') }}
+		{% endblock %}
+		{% block javascripts %}
+			{{ encore_entry_script_tags('backend') }}
+		{% endblock %}
+	</head>
+	<body>
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+	{% block body %}
+		
+		
+	{% endblock %}
+	</div>
+	{% include('widget/flashbag.html.twig') %}
+	</body>
+</html>

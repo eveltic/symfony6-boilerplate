@@ -1,13 +1,10 @@
 <?php
-namespace App\Manager\Crud\Field;
+namespace Eveltic\Crud\Field;
 
 
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Eveltic\Crud\Field\AbstractField;
 
-/**
- * Class BooleanField
- * @package App\Manager\Crud\Field
- */
 class BooleanField extends AbstractField
 {
     /**

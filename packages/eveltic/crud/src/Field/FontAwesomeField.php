@@ -1,10 +1,9 @@
 <?php
-namespace App\Manager\Crud\Field;
+namespace Eveltic\Crud\Field;
 
-/**
- * Class FontAwesomeField
- * @package App\Manager\Crud\Field
- */
+
+use Eveltic\Crud\Field\AbstractField;
+
 class FontAwesomeField extends AbstractField
 {
     /**

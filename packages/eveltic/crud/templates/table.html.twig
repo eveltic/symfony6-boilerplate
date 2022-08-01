@@ -1,0 +1,32 @@
+{% if configuration is defined and crud is defined %}
+    <div class="modal fade" id="crud-modal" aria-hidden="true" style="display: none;">
+        <div id="crud-modal-dialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'Crud Modal'|trans }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="crud-modal-iframe" src="data:text/html;charset=UTF-8,<h1>{{ 'Loading...'|trans }}</h1>" width="100%"></iframe>
+                </div>
+{#                <div class="modal-footer justify-content-between">#}
+{#                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Close'|trans }}</button>#}
+{#                </div>#}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script>
+        $(document).ready(function() {
+            $(".crud-modal").click(function(e) {
+                e.preventDefault();
+                $("#crud-modal").modal("show").show();
+                let outerHeight = ($("#crud-modal-dialog").outerHeight() - $("#crud-modal-iframe").outerHeight()) + 100;
+                $("#crud-modal-iframe").attr("src", $(this).attr("data-href")).attr("height", ($(window).height() - outerHeight)+'px');
+            });
+        });
+    </script>
+{% endif %}

@@ -1,12 +1,27 @@
 services:
-    # configuration_groups:
-    #     - Doctrine\ORM\QueryBuilder:
-    #     - Eveltic\Crud\Configuration\Group\AccessGroup:
-    #     - Eveltic\Crud\Configuration\Group\ActionGroup:
-    #     - Eveltic\Crud\Configuration\Group\ButtonGroup:
-    #     - Eveltic\Crud\Configuration\Group\FieldGroup:
-    #     - Eveltic\Crud\Configuration\Group\FormGroup:
-    #     - Eveltic\Crud\Configuration\Group\TextGroup:
+  Eveltic\Crud\Factory\CrudFactory:
+    public: false
+    arguments: ['@security.helper', '@translator']
+  eveltic.crud.crud_factory:
+    public: true
+    alias: Eveltic\Crud\Factory\CrudFactory
+    
+  Eveltic\Crud\Twig\CrudExtension:
+    tags: [twig.extension]
+    public: false
+    arguments: ['@router.default', '@eveltic.crud.crud_factory']
+  eveltic.crud.twig_extension:
+    public: true
+    alias: Eveltic\Crud\Twig\CrudExtension
+# eveltic:
+#     configuration_groups:
+#         - Doctrine\ORM\QueryBuilder:
+#         - Eveltic\Crud\Configuration\Group\AccessGroup:
+#         - Eveltic\Crud\Configuration\Group\ActionGroup:
+#         - Eveltic\Crud\Configuration\Group\ButtonGroup:
+#         - Eveltic\Crud\Configuration\Group\FieldGroup:
+#         - Eveltic\Crud\Configuration\Group\FormGroup:
+#         - Eveltic\Crud\Configuration\Group\TextGroup:
 ##    Eveltic\Crud\CrudFactory:
 ##      public: false
 ##      arguments: ['@request_stack']

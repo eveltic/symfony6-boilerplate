@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    </head>
-    <body>
-        {{ render(controller("App\\Controller\\Backend\\UserController::index", {})) }}
-    </body>
-</html>
+{% extends 'app/backend/_template.html.twig' %}
+{% block title %}{{ 'Crud Test'|trans }}{% endblock %}
+{% block body %}
+        {# {{ render(controller("App\\Controller\\Backend\\UserController::index", {})) }} #}
+        {{ hello_bootstrap_table_render(table) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
